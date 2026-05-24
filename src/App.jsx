@@ -392,6 +392,7 @@ export default function App() {
   const [focusStartedAt, setFocusStartedAt] = useState(null);
   const [contextMenu, setContextMenu] = useState(null);
   const [wheelMode, setWheelMode] = useState('pan'); // 'pan' | 'zoom'
+  const [hoveredItemId, setHoveredItemId] = useState(null);
   const saveTimer = useRef(null);
   const sceneApiRef = useRef({});
 
@@ -798,6 +799,7 @@ export default function App() {
         onContextMenu={(ud, x, y) => setContextMenu({ x, y, item: ud.item, phase: ud.phase, kind: ud.type === 'pathStep' ? 'step' : ud.type === 'phaseItem' ? 'initiative' : ud.type })}
         wheelMode={wheelMode}
         onToggleWheelMode={() => setWheelMode(m => m === 'pan' ? 'zoom' : 'pan')}
+        hoveredItemId={hoveredItemId}
         sceneApiRef={sceneApiRef}
       />
 
@@ -820,6 +822,7 @@ export default function App() {
         flyToNextAction={flyToNextAction}
         filter={nextUpFilter} setFilter={setNextUpFilter}
         onEnterFocus={enterFocus}
+        onHoverItem={setHoveredItemId}
       />
 
       <ZoneNav flyTo={flyTo} addMilestone={() => addMilestone('')} />
@@ -919,12 +922,14 @@ export default function App() {
 }
 
 /* ==================== 3D SCENE ==================== */
-function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheelMode, onToggleWheelMode, sceneApiRef }) {
+function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheelMode, onToggleWheelMode, hoveredItemId, sceneApiRef }) {
   const mountRef = useRef(null);
   const wheelModeRef = useRef(wheelMode);
   useEffect(() => { wheelModeRef.current = wheelMode; }, [wheelMode]);
   const toggleRef = useRef(onToggleWheelMode);
   useEffect(() => { toggleRef.current = onToggleWheelMode; }, [onToggleWheelMode]);
+  const hoveredRef = useRef(hoveredItemId);
+  useEffect(() => { hoveredRef.current = hoveredItemId; }, [hoveredItemId]);
 
   const completedItems = (data.roadmap || []).reduce((s, p) => {
     const i = countLeaves(p.items || []);
@@ -1225,6 +1230,46 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
       ring.position.set(0, y, 0);
       scene.add(ring);
 
+      // Per-phase progress ring (tight around the orb, fills as you complete items)
+      if (phaseProgress > 0) {
+        const progArc = new THREE.Mesh(
+          new THREE.RingGeometry(4.0, 4.35, 64, 1, -Math.PI / 2, phaseProgress * Math.PI * 2),
+          new THREE.MeshBasicMaterial({
+            color: phaseComplete ? 0xfbbf24 : phaseColor,
+            transparent: true, opacity: 0.85, side: THREE.DoubleSide,
+          })
+        );
+        progArc.rotation.x = Math.PI / 2;
+        progArc.position.set(0, y, 0);
+        scene.add(progArc);
+      }
+      // Faint background ring (the empty part)
+      const progBg = new THREE.Mesh(
+        new THREE.RingGeometry(4.0, 4.35, 64),
+        new THREE.MeshBasicMaterial({
+          color: 0x3f3f46, transparent: true, opacity: 0.25, side: THREE.DoubleSide,
+        })
+      );
+      progBg.rotation.x = Math.PI / 2;
+      progBg.position.set(0, y, 0);
+      scene.add(progBg);
+
+      // Distinct silhouette: decorative rings increasing with phase number
+      // Ph1 = 0 extra rings, Ph2 = 1, Ph3 = 2, Ph4 = 3 (Saturn-like progression)
+      const extraRingCount = Math.max(0, phase.phase - 1);
+      for (let k = 0; k < extraRingCount; k++) {
+        const decoRing = new THREE.Mesh(
+          new THREE.RingGeometry(5.2 + k * 0.4, 5.35 + k * 0.4, 80),
+          new THREE.MeshBasicMaterial({
+            color: phaseColor, transparent: true, opacity: 0.4, side: THREE.DoubleSide,
+          })
+        );
+        decoRing.rotation.x = Math.PI / 2 + 0.35 + k * 0.25;
+        decoRing.rotation.z = k * 0.4;
+        decoRing.position.set(0, y, 0);
+        scene.add(decoRing);
+      }
+
       if (settings.showLabels) {
         const lbl = makeLabel(`Ph${phase.phase} · ${phase.title}`, phase.color, 0.85);
         lbl.position.set(0, y + 5.5, 0);
@@ -1266,6 +1311,16 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
           const initLabel = makeNodeLabel(init.text, initComplete ? '#fbbf24' : '#e4e4e7', initComplete ? 0.7 : 0.92);
           initLabel.userData = { type: 'nodeLabel', itemRef: iMesh, yOffset: 1.6 };
           scene.add(initLabel);
+        }
+
+        // P1 priority marker — small red pulse beside the orb
+        if (init.priority === 1 && !init.done) {
+          const prioDot = new THREE.Mesh(
+            new THREE.SphereGeometry(0.28, 12, 12),
+            new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.95 })
+          );
+          prioDot.userData = { type: 'priorityDot', itemRef: iMesh };
+          scene.add(prioDot);
         }
 
         // Done halo
@@ -1704,6 +1759,16 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
         im.position.z = Math.sin(ud.orbitAngle) * ud.orbitR;
       });
 
+      // Hover-link: scale up the orb that matches the side-panel hovered item
+      const hoveredId = hoveredRef.current;
+      const hoverScale = 1 + Math.sin(time * 5) * 0.18 + 0.35;
+      [...initiativeMeshes, ...pathStepMeshes, ...branchItemMeshes].forEach(m => {
+        const isHovered = hoveredId && m.userData.item?.id === hoveredId;
+        const baseScale = m.userData.__baseScale || 1;
+        if (!m.userData.__baseScale) m.userData.__baseScale = 1;
+        m.scale.setScalar(isHovered ? baseScale * hoverScale : baseScale);
+      });
+
       // Aux meshes follow their refs
       scene.children.forEach(c => {
         if (c.userData?.itemRef) {
@@ -1711,6 +1776,12 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
           if (c.userData.type === 'nodeLabel') {
             // Sprites face the camera automatically; just lift above the orb
             c.position.y += c.userData.yOffset || 1.5;
+          } else if (c.userData.type === 'priorityDot') {
+            // Sit slightly above-right of the orb and pulse
+            c.position.x += 1.0;
+            c.position.y += 0.9;
+            c.scale.setScalar(1 + Math.sin(time * 3.5) * 0.25);
+            c.material.opacity = 0.7 + Math.sin(time * 3.5) * 0.25;
           } else {
             c.lookAt(camera.position);
             if (c.userData.type === 'doneHalo') c.rotateY(time * 0.5);
@@ -1859,7 +1930,7 @@ function IconButton({ onClick, icon: Icon, title }) {
 }
 
 /* ==================== TODAY PANEL ==================== */
-function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone, onFocus, flyToNextAction, filter, setFilter, onEnterFocus }) {
+function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone, onFocus, flyToNextAction, filter, setFilter, onEnterFocus, onHoverItem }) {
   if (collapsed) {
     return (
       <button
@@ -1910,6 +1981,8 @@ function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone,
                   key={na.item.id}
                   className={`group flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors ${idx === 0 ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-zinc-900/40 hover:bg-zinc-900/80 border border-transparent'}`}
                   onClick={() => onFocus(na.item, na.phase, na.kind)}
+                  onMouseEnter={() => onHoverItem?.(na.item.id)}
+                  onMouseLeave={() => onHoverItem?.(null)}
                 >
                   <button onClick={(e) => { e.stopPropagation(); onToggleDone(na.item.id, !na.item.done); }} className="flex-shrink-0 mt-0.5" title="Toggle done">
                     <Circle className="w-3.5 h-3.5 text-zinc-600 hover:text-emerald-400 transition-colors" />
