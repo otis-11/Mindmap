@@ -3795,11 +3795,24 @@ function MenuItem({ icon: Icon, label, shortcut, onClick, danger }) {
 }
 
 /* ==================== FOCUS MODE ==================== */
+const BREAKDOWN_TEMPLATES = [
+  { id: 'outreach', label: 'Outreach', steps: ['Research the prospect', 'Draft a personalized opener', 'Send the message', 'Schedule follow-up #1 (3d)', 'Schedule follow-up #2 (7d)'] },
+  { id: 'research', label: 'Research', steps: ['List 5-10 sources', 'Skim each for relevance', 'Take notes on top 3', 'Synthesize into 1 page', 'Decide next action'] },
+  { id: 'build', label: 'Build', steps: ['Sketch the flow', 'Build a working v1', 'Self-test edge cases', 'Polish copy + visuals', 'Ship'] },
+  { id: 'decide', label: 'Decide', steps: ['List the options', 'Define 3 criteria that matter', 'Score each option', 'Pick one', 'Write a one-sentence reason why'] },
+  { id: 'write', label: 'Write', steps: ['Outline the points', 'Write a rough draft', 'Edit for clarity', 'Format + add visuals', 'Publish / send'] },
+  { id: 'meet', label: 'Meeting', steps: ['Define one outcome you want', 'Send agenda', 'Prep notes / data', 'Run the meeting', 'Send recap + next steps'] },
+];
+
 function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild, deleteNode, enterFocus, exitFocus, pauseTimer, resumeTimer }) {
   const found = findItemAnywhere(data, itemId);
   const [now, setNow] = useState(Date.now());
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [breakdownText, setBreakdownText] = useState('');
+  const [templatesOpen, setTemplatesOpen] = useState(false);
+  const [stuckOpen, setStuckOpen] = useState(false);
+  const [pomodoro, setPomodoro] = useState(false);
+  const [pomoBreakNotice, setPomoBreakNotice] = useState(false);
   const [newSub, setNewSub] = useState('');
 
   useEffect(() => {
@@ -3822,9 +3835,30 @@ function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild,
   const { item, phase, kind } = found;
   const runningMs = startedAt ? now - startedAt : 0;
   const totalMs = (item.actualMinutes || 0) * 60000 + runningMs;
+  // Pomodoro: 25min countdown from the current session start
+  const POMO_MS = 25 * 60 * 1000;
+  const sessionMs = runningMs;
+  const pomoRemaining = pomodoro && startedAt ? Math.max(0, POMO_MS - sessionMs) : null;
+  useEffect(() => {
+    if (pomodoro && startedAt && sessionMs >= POMO_MS && !pomoBreakNotice) {
+      setPomoBreakNotice(true);
+      pauseTimer();
+    }
+  }, [pomodoro, startedAt, sessionMs, pomoBreakNotice, pauseTimer]);
   const due = getDueDateInfo(item.dueDate);
   const subtasks = item.children || [];
   const subDone = subtasks.filter(s => s.done).length;
+  const todayItemMs = (data.completionLog || []).filter(e => e.itemId === item.id && dateKey(e.date) === todayKey()).length * 0; // (we don't track per-item daily time; use total + session)
+  // Cumulative formatting
+  const sessionLabel = startedAt ? `+${formatDuration(runningMs)} this session` : null;
+  const totalLabel = formatDuration(totalMs);
+
+  const applyTemplate = (tpl) => {
+    tpl.steps.forEach(s => addChild(item.id, s));
+    setTemplatesOpen(false);
+  };
+
+  const stuckAlternatives = nextActions.filter(na => na.item.id !== item.id && !na.item.done).slice(0, 3);
 
   const handleBreakdown = () => {
     const lines = breakdownText.split('\n').map(s => s.trim()).filter(Boolean);
@@ -3887,11 +3921,33 @@ function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild,
               <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
                 Steps · {subDone}/{subtasks.length}
               </div>
-              <button onClick={() => setBreakdownOpen(!breakdownOpen)} className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-amber-300 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                Break into steps
-              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => { setTemplatesOpen(!templatesOpen); setBreakdownOpen(false); }} className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-cyan-300 flex items-center gap-1">
+                  <Layers className="w-3 h-3" />
+                  Templates
+                </button>
+                <button onClick={() => { setBreakdownOpen(!breakdownOpen); setTemplatesOpen(false); }} className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-amber-300 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  Break into steps
+                </button>
+              </div>
             </div>
+
+            {templatesOpen && (
+              <div className="mb-3 p-2 rounded-lg bg-zinc-950 border border-cyan-500/30 fade-in">
+                <div className="text-[10px] text-zinc-400 mb-1.5">Insert preset steps:</div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {BREAKDOWN_TEMPLATES.map(tpl => (
+                    <button key={tpl.id} onClick={() => applyTemplate(tpl)}
+                      className="text-left px-2 py-1.5 rounded bg-zinc-900 hover:bg-cyan-500/10 hover:border-cyan-500/40 border border-zinc-800 transition-colors">
+                      <div className="text-xs text-zinc-200">{tpl.label}</div>
+                      <div className="text-[9px] text-zinc-500 mt-0.5 line-clamp-1">{tpl.steps.join(' → ')}</div>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setTemplatesOpen(false)} className="w-full mt-2 px-2 py-1 rounded bg-zinc-900 text-[10px] text-zinc-400">Cancel</button>
+              </div>
+            )}
 
             {breakdownOpen && (
               <div className="mb-3 p-2 rounded-lg bg-zinc-950 border border-amber-500/30 fade-in">
@@ -3926,24 +3982,57 @@ function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild,
             </div>
           </div>
 
-          <div className="mb-4 p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 flex items-center justify-between">
-            <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">Time on task</div>
-              <div className={`font-mono text-2xl font-bold ${startedAt ? 'text-amber-300' : 'text-zinc-300'}`}>{formatDuration(totalMs)}</div>
+          <div className="mb-4 p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800">
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">Total on task</div>
+                <div className={`font-mono text-2xl font-bold ${startedAt ? 'text-amber-300' : 'text-zinc-300'}`}>{totalLabel}</div>
+                {sessionLabel && (
+                  <div className="text-[10px] font-mono text-emerald-400 mt-0.5">{sessionLabel}</div>
+                )}
+              </div>
+              <button onClick={startedAt ? pauseTimer : resumeTimer}
+                className={`px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center gap-2 ${
+                  startedAt
+                    ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
+                    : 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold'
+                }`}>
+                {startedAt ? <><Pause className="w-3.5 h-3.5" />Pause</> : <><Play className="w-3.5 h-3.5" />Resume</>}
+              </button>
             </div>
-            <button onClick={startedAt ? pauseTimer : resumeTimer}
-              className={`px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center gap-2 ${
-                startedAt
-                  ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
-                  : 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold'
-              }`}>
-              {startedAt ? <><Pause className="w-3.5 h-3.5" />Pause</> : <><Play className="w-3.5 h-3.5" />Resume</>}
-            </button>
+            <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80">
+              <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-zinc-400 cursor-pointer">
+                <input type="checkbox" checked={pomodoro} onChange={e => { setPomodoro(e.target.checked); setPomoBreakNotice(false); }} className="accent-amber-500" />
+                Pomodoro 25/5
+              </label>
+              {pomoRemaining != null && (
+                <div className="font-mono text-xs text-cyan-300">
+                  {Math.floor(pomoRemaining / 60000)}:{String(Math.floor((pomoRemaining % 60000) / 1000)).padStart(2, '0')} until break
+                </div>
+              )}
+            </div>
           </div>
+
+          {pomoBreakNotice && (
+            <div className="mb-4 p-3 rounded-xl bg-cyan-500/15 border border-cyan-500/40 fade-in flex items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 mb-0.5">Break time</div>
+                <div className="text-sm text-zinc-200">Take 5 minutes. Stretch. Water. Look away from the screen.</div>
+              </div>
+              <button onClick={() => { setPomoBreakNotice(false); resumeTimer(); }} className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-zinc-950 text-xs font-semibold flex items-center gap-1 flex-shrink-0">
+                <Play className="w-3 h-3" />
+                Back at it
+              </button>
+            </div>
+          )}
 
           <div className="flex gap-2">
             <button onClick={exitFocus} className="flex-1 px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-sm text-zinc-300">
               Save & exit
+            </button>
+            <button onClick={() => setStuckOpen(!stuckOpen)} className={`flex-1 px-4 py-3 rounded-xl border text-sm flex items-center justify-center gap-1.5 ${stuckOpen ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-200' : 'bg-zinc-900 hover:bg-zinc-800 border-zinc-800 text-zinc-300'}`}>
+              <AlertCircle className="w-4 h-4" />
+              I'm stuck
             </button>
             <button onClick={handleDoneNext} className="flex-[2] px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30">
               <CheckCircle2 className="w-4 h-4" />
@@ -3951,8 +4040,35 @@ function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild,
             </button>
           </div>
 
+          {stuckOpen && (
+            <div className="mt-3 p-3 rounded-xl bg-zinc-900/60 border border-cyan-500/30 fade-in">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-300">Bounce to something else</div>
+                <button onClick={() => setStuckOpen(false)} className="text-[10px] text-zinc-500 hover:text-zinc-300">close</button>
+              </div>
+              {stuckAlternatives.length === 0 ? (
+                <p className="text-xs text-zinc-500 italic">Nothing else open. Maybe finish this one anyway?</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {stuckAlternatives.map(alt => (
+                    <button key={alt.item.id} onClick={() => { setStuckOpen(false); enterFocus(alt.item.id); }}
+                      className="w-full text-left p-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 flex items-start gap-2">
+                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: alt.phase.color }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-zinc-100">{alt.item.text}</div>
+                        <div className="text-[9px] font-mono uppercase tracking-wider mt-0.5" style={{ color: alt.phase.color }}>
+                          {alt.kind === 'step' ? 'Step' : 'Init'} · Ph{alt.phase.phase}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="text-center mt-4 text-[10px] font-mono uppercase tracking-wider text-zinc-600">
-            Esc to exit · Space to toggle done
+            Esc to exit · Space to toggle done · Cmd/Ctrl-K to search
           </div>
         </div>
       </div>
