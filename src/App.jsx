@@ -274,6 +274,37 @@ function countLeaves(items) {
   return { done, total };
 }
 
+// ==================== STREAK + DAILY HELPERS ====================
+function dateKey(d) { return new Date(d).toISOString().slice(0, 10); }
+function todayKey() { return dateKey(new Date()); }
+
+function computeStreak(completionLog) {
+  if (!completionLog?.length) return 0;
+  const days = new Set(completionLog.map(e => dateKey(e.date)));
+  const tk = todayKey();
+  const yk = dateKey(new Date(Date.now() - 86400000));
+  let cursor;
+  if (days.has(tk)) cursor = new Date();
+  else if (days.has(yk)) cursor = new Date(Date.now() - 86400000);
+  else return 0;
+  let streak = 0;
+  while (days.has(dateKey(cursor))) {
+    streak++;
+    cursor = new Date(cursor.getTime() - 86400000);
+  }
+  return streak;
+}
+
+function getYesterdayWins(completionLog) {
+  const yk = dateKey(new Date(Date.now() - 86400000));
+  return (completionLog || []).filter(e => dateKey(e.date) === yk);
+}
+
+function getTodayDoneCount(completionLog) {
+  const tk = todayKey();
+  return (completionLog || []).filter(e => dateKey(e.date) === tk).length;
+}
+
 // ==================== SCHEDULE / TIME HELPERS ====================
 function getDueDateInfo(dateStr) {
   if (!dateStr) return null;
@@ -406,6 +437,16 @@ export default function App() {
     })();
   }, []);
 
+  // Show daily briefing once per day (only if there's some history)
+  useEffect(() => {
+    if (!loaded) return;
+    if (modal) return;
+    const tk = todayKey();
+    if (data.lastBriefingDate === tk) return;
+    if ((data.completionLog?.length || 0) === 0) return;
+    setModal('briefing');
+  }, [loaded]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (!loaded) return;
     clearTimeout(saveTimer.current);
@@ -419,6 +460,7 @@ export default function App() {
   }, [data, loaded]);
 
   const stats = useMemo(() => computeStats(data), [data]);
+  const streak = useMemo(() => computeStreak(data.completionLog), [data.completionLog]);
   const [nextUpFilter, setNextUpFilter] = useState('all');
   const nextActions = useMemo(
     () => findNextActions(data, { limit: 5, filter: nextUpFilter }),
@@ -467,21 +509,43 @@ export default function App() {
       };
 
       if (changes.done === true && wasUndone) {
-        const found = (() => {
-          for (const ph of newData.roadmap) {
-            const f = findInTree([...ph.items, ...ph.pathSteps], i => i.id === nodeId);
-            if (f) return f;
-          }
-          return null;
-        })();
-        if (found) {
+        let foundItem = null;
+        let foundPhase = null;
+        for (const ph of newData.roadmap) {
+          const f = findInTree([...ph.items, ...ph.pathSteps], i => i.id === nodeId);
+          if (f) { foundItem = f; foundPhase = ph; break; }
+        }
+        if (foundItem) {
           newData.completionLog = [
-            { itemId: nodeId, text: found.text, date: new Date().toISOString() },
+            { itemId: nodeId, text: foundItem.text, date: new Date().toISOString() },
             ...(d.completionLog || []).slice(0, 199)
           ];
+          // Detect: did this just complete a whole phase?
+          let phaseJustCompleted = false;
+          if (foundPhase) {
+            const oldPhase = d.roadmap.find(p => p.id === foundPhase.id);
+            const totalBefore = countLeaves(oldPhase.items).total + countLeaves(oldPhase.pathSteps).total;
+            const doneBefore = countLeaves(oldPhase.items).done + countLeaves(oldPhase.pathSteps).done;
+            const totalAfter = countLeaves(foundPhase.items).total + countLeaves(foundPhase.pathSteps).total;
+            const doneAfter = countLeaves(foundPhase.items).done + countLeaves(foundPhase.pathSteps).done;
+            const wasComplete = totalBefore > 0 && doneBefore === totalBefore;
+            const nowComplete = totalAfter > 0 && doneAfter === totalAfter;
+            phaseJustCompleted = !wasComplete && nowComplete;
+          }
           if (d.settings.celebrate) {
-            setCelebration({ text: found.text, ts: Date.now() });
-            setTimeout(() => setCelebration(null), 2400);
+            if (phaseJustCompleted) {
+              setCelebration({
+                big: true,
+                text: `Phase ${foundPhase.phase} complete`,
+                subtitle: foundPhase.title,
+                color: foundPhase.color,
+                ts: Date.now(),
+              });
+              setTimeout(() => setCelebration(null), 4500);
+            } else {
+              setCelebration({ text: foundItem.text, ts: Date.now() });
+              setTimeout(() => setCelebration(null), 2400);
+            }
           }
         }
       }
@@ -806,10 +870,11 @@ export default function App() {
       <WheelModeChip mode={wheelMode} onToggle={() => setWheelMode(m => m === 'pan' ? 'zoom' : 'pan')} />
 
       <TopBar
-        stats={stats} savedFlash={savedFlash} metrics={data.metrics}
+        stats={stats} savedFlash={savedFlash} metrics={data.metrics} streak={streak}
         onSettings={() => setModal('settings')}
         onMetrics={() => setModal('metrics')}
         onJournal={() => setModal('journal')}
+        onBriefing={() => setModal('briefing')}
         toggleSetting={toggleSetting}
         autoRotate={data.settings.autoRotate}
       />
@@ -858,6 +923,23 @@ export default function App() {
           addReflection={addReflection} deleteReflection={deleteReflection}
           promoteNote={promoteNote}
           onClose={() => setModal(null)} />
+      )}
+      {modal === 'briefing' && (
+        <DailyBriefing
+          data={data}
+          stats={stats}
+          streak={streak}
+          nextActions={nextActions}
+          onClose={() => {
+            setData(d => ({ ...d, lastBriefingDate: todayKey() }));
+            setModal(null);
+          }}
+          onStartWorking={(itemId) => {
+            setData(d => ({ ...d, lastBriefingDate: todayKey() }));
+            setModal(null);
+            enterFocus(itemId);
+          }}
+        />
       )}
 
       {focused && (
@@ -909,12 +991,23 @@ export default function App() {
 
       {celebration && (
         <div className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center">
-          <div className="celebrate-pop bg-zinc-900/95 backdrop-blur-xl border border-amber-500/50 rounded-2xl px-6 py-5 max-w-sm text-center shadow-2xl shadow-amber-500/30">
-            <div className="text-3xl mb-2">🎉</div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400 mb-1">Step Complete</div>
-            <div className="text-sm text-zinc-100 leading-relaxed">{celebration.text}</div>
-            <div className="text-xs text-zinc-500 mt-2 font-mono">Climber rises ↑</div>
-          </div>
+          {celebration.big ? (
+            <div className="celebrate-pop bg-zinc-950/97 backdrop-blur-2xl border-2 rounded-3xl px-10 py-8 max-w-lg text-center shadow-2xl"
+              style={{ borderColor: (celebration.color || '#fbbf24') + 'aa', boxShadow: `0 0 80px -10px ${(celebration.color || '#fbbf24')}80` }}>
+              <div className="text-6xl mb-3">🚀</div>
+              <div className="font-mono text-[11px] uppercase tracking-[0.3em] mb-2" style={{ color: celebration.color || '#fbbf24' }}>Milestone Unlocked</div>
+              <div className="font-display text-3xl font-bold text-zinc-100 mb-1">{celebration.text}</div>
+              <div className="text-base text-zinc-300 mb-3">{celebration.subtitle}</div>
+              <div className="text-xs text-zinc-500 font-mono">Onward to the next phase ↑</div>
+            </div>
+          ) : (
+            <div className="celebrate-pop bg-zinc-900/95 backdrop-blur-xl border border-amber-500/50 rounded-2xl px-6 py-5 max-w-sm text-center shadow-2xl shadow-amber-500/30">
+              <div className="text-3xl mb-2">🎉</div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400 mb-1">Step Complete</div>
+              <div className="text-sm text-zinc-100 leading-relaxed">{celebration.text}</div>
+              <div className="text-xs text-zinc-500 mt-2 font-mono">Climber rises ↑</div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -1878,7 +1971,7 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
 }
 
 /* ==================== TOP BAR ==================== */
-function TopBar({ stats, savedFlash, metrics, onSettings, onMetrics, onJournal, toggleSetting, autoRotate }) {
+function TopBar({ stats, savedFlash, metrics, streak, onSettings, onMetrics, onJournal, onBriefing, toggleSetting, autoRotate }) {
   const mrrPct = Math.min(1, (metrics.mrr || 0) / (metrics.targetMrr || 10000));
   return (
     <div className="absolute top-0 left-0 right-0 z-20 backdrop-blur-xl bg-zinc-950/70 border-b border-zinc-900/80">
@@ -1902,6 +1995,15 @@ function TopBar({ stats, savedFlash, metrics, onSettings, onMetrics, onJournal, 
                 Saved
               </div>
             )}
+            {streak > 0 && (
+              <Tooltip label={`${streak} day streak — keep it alive`} side="bottom">
+                <button onClick={onBriefing} className="flex items-center gap-1 px-1.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 transition-colors">
+                  <span className="text-[10px]">🔥</span>
+                  <span className="font-mono text-[10px] font-bold">{streak}</span>
+                </button>
+              </Tooltip>
+            )}
+            <IconButton onClick={onBriefing} icon={Calendar} title="Daily briefing" />
             <IconButton onClick={onMetrics} icon={TrendingUp} title="Metrics" />
             <IconButton onClick={onJournal} icon={BookOpen} title="Journal" />
             <IconButton onClick={() => toggleSetting('autoRotate')} icon={autoRotate ? Pause : Play} title={autoRotate ? 'Pause' : 'Play'} />
@@ -2880,6 +2982,117 @@ function ChipBtn({ active, onClick, icon: Icon, label, color }) {
       <Icon className="w-3 h-3" />
       {label}
     </button>
+  );
+}
+
+/* ==================== DAILY BRIEFING ==================== */
+function DailyBriefing({ data, stats, streak, nextActions, onClose, onStartWorking }) {
+  const yWins = getYesterdayWins(data.completionLog);
+  const tDone = getTodayDoneCount(data.completionLog);
+  const top3 = nextActions.slice(0, 3);
+  const topItem = top3[0];
+
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 5) return 'Up late';
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  })();
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-3 fade-in" onClick={onClose}>
+      <div className="bg-zinc-950 border border-amber-500/30 rounded-2xl w-full max-w-lg slide-up shadow-2xl shadow-amber-500/10" onClick={e => e.stopPropagation()}>
+        <div className="p-5 border-b border-zinc-800 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400 mb-1">Daily Briefing</div>
+              <div className="font-display text-2xl font-bold leading-tight">{greeting}.</div>
+            </div>
+            <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300"><X className="w-4 h-4" /></button>
+          </div>
+          <div className="flex items-center gap-3 mt-3">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
+              <span className="text-sm">🔥</span>
+              <span className="font-mono text-xs font-bold text-amber-200">{streak}</span>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-300/70">day{streak === 1 ? '' : 's'}</span>
+            </div>
+            <div className="text-[11px] text-zinc-400">
+              {stats.done}/{stats.total} total · {Math.round(stats.progress * 100)}%
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {/* Yesterday */}
+          <div>
+            <div className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5">Yesterday</div>
+            {yWins.length > 0 ? (
+              <div className="space-y-1">
+                {yWins.slice(0, 4).map(w => (
+                  <div key={w.itemId + w.date} className="flex items-start gap-2 text-xs text-zinc-200">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <span className="flex-1">{w.text}</span>
+                  </div>
+                ))}
+                {yWins.length > 4 && (
+                  <div className="text-[10px] text-zinc-500 pl-5">+ {yWins.length - 4} more</div>
+                )}
+              </div>
+            ) : (
+              <div className="text-xs text-zinc-500 italic">Nothing logged yesterday. Today's a fresh chance.</div>
+            )}
+          </div>
+
+          {/* Today's plan */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="font-mono text-[10px] uppercase tracking-wider text-amber-400">Today · Top 3</div>
+              {tDone > 0 && (
+                <div className="text-[10px] font-mono text-emerald-400">{tDone} done already today</div>
+              )}
+            </div>
+            {top3.length > 0 ? (
+              <div className="space-y-1.5">
+                {top3.map((na, i) => (
+                  <div key={na.item.id} className={`p-2.5 rounded-lg border ${i === 0 ? 'bg-amber-500/10 border-amber-500/40' : 'bg-zinc-900/50 border-zinc-800'}`}>
+                    <div className="flex items-start gap-2">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-mono text-[10px] font-bold flex-shrink-0 ${i === 0 ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
+                        {i + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-zinc-100 leading-tight font-medium">{na.item.text}</div>
+                        {na.item.description && (
+                          <div className="text-[11px] text-zinc-400 leading-snug mt-1 line-clamp-2">{na.item.description}</div>
+                        )}
+                        <div className="text-[9px] font-mono uppercase tracking-wider mt-1.5" style={{ color: na.phase.color }}>
+                          {na.kind === 'step' ? 'Step' : 'Init'} · Ph{na.phase.phase} · {na.phase.title}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-xs text-zinc-500 italic">All clear — add some items to keep moving.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="p-4 border-t border-zinc-800 flex gap-2">
+          <button onClick={onClose} className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-xs text-zinc-300">
+            Just looking
+          </button>
+          {topItem && (
+            <button onClick={() => onStartWorking(topItem.item.id)}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-500/30">
+              <Telescope className="w-4 h-4" />
+              Start with #1
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
