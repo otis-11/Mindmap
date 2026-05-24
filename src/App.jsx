@@ -26,73 +26,145 @@ const FALLBACK = {
   branches: [
     { id: 'sales', name: 'Sales', tagline: 'Your #1 bottleneck', color: '#ef4444',
       items: [
-        { id: 's1', text: 'Cold calls not working', notes: '', children: [] },
-        { id: 's2', text: 'Referrals — working but finite', notes: '', children: [] },
-        { id: 's3', text: 'Outreach campaign in progress', notes: '', children: [] },
-        { id: 's4', text: 'Demos > resumes', notes: '', children: [] },
+        { id: 's1', text: 'Cold calls not working',
+          description: "Phone outreach to SMBs isn't generating meetings. The volume-to-result ratio is too low to be a primary channel — your time is better spent on warmer approaches.",
+          notes: '', children: [] },
+        { id: 's2', text: 'Referrals — working but finite',
+          description: 'Warm intros convert well but the pool dries up fast. Reliable for the first 5-10 clients, not scalable past that. Treat referrals as a bonus, not the engine.',
+          notes: '', children: [] },
+        { id: 's3', text: 'Outreach campaign in progress',
+          description: 'Structured email/LinkedIn outbound being built and tested with a defined ICP and message sequence. This is the primary lead engine going forward.',
+          notes: '', children: [] },
+        { id: 's4', text: 'Demos > resumes',
+          description: "A working demo closes faster than describing services on paper. SMBs need to see capability, not read about it. Lead every conversation with 'let me show you'.",
+          notes: '', children: [] },
       ]},
     { id: 'offers', name: 'Offers', tagline: 'Pick ONE thing', color: '#f97316',
       items: [
-        { id: 'o1', text: 'Too many offers confuses prospects', notes: '', children: [] },
-        { id: 'o2', text: 'Fast-MRR entry: websites + automation', notes: '', children: [] },
+        { id: 'o1', text: 'Too many offers confuses prospects',
+          description: "Listing receptionists + CRMs + leads + scheduling + automations makes you look like a generalist. SMBs need one obvious thing you do — the rest becomes upsell once they're a client.",
+          notes: '', children: [] },
+        { id: 'o2', text: 'Fast-MRR entry: websites + automation',
+          description: 'Lead with a productized website-plus-automation package. Quick to deliver, easy to price, and builds the recurring relationship that lets you upsell harder AI work later.',
+          notes: '', children: [] },
       ]},
     { id: 'build', name: 'Build', tagline: 'Speed without quality loss', color: '#eab308',
       items: [
-        { id: 'b1', text: 'Partner is the strong builder', notes: '', children: [] },
-        { id: 'b2', text: 'Reusable templates across clients', notes: '', children: [] },
+        { id: 'b1', text: 'Partner is the strong builder',
+          description: "Delivery quality is your partner's strength. You sell and scope; he ships. Don't let yourself become the bottleneck on the build side.",
+          notes: '', children: [] },
+        { id: 'b2', text: 'Reusable templates across clients',
+          description: 'Every build should produce assets reusable for the next client — workflows, components, automations. Templates compound; one-offs do not.',
+          notes: '', children: [] },
       ]},
     { id: 'money', name: 'Money', tagline: '$2-4k runway', color: '#10b981',
       items: [
-        { id: 'm1', text: 'Audit subscriptions', notes: '', children: [] },
-        { id: 'm2', text: 'Stripe this week', notes: '', children: [] },
+        { id: 'm1', text: 'Audit subscriptions',
+          description: 'Go through every recurring SaaS charge. Cancel or downgrade anything not actively driving revenue. Stretches the runway and forces clarity on what actually matters.',
+          notes: '', children: [] },
+        { id: 'm2', text: 'Stripe this week',
+          description: 'Live Stripe so you can take payment the moment someone says yes. Friction at the close kills deals — having a one-click invoice or payment link is non-negotiable.',
+          notes: '', children: [] },
       ]},
     { id: 'roles', name: 'Roles', tagline: "You're overloaded", color: '#0ea5e9',
       items: [
-        { id: 'r1', text: 'AM = sales only, PM = build', notes: '', children: [] },
+        { id: 'r1', text: 'AM = sales only, PM = build',
+          description: 'Morning blocked for revenue (outreach, calls, demos). Afternoon for delivery (building, client work). Mixing modes destroys both — context-switching is the silent killer.',
+          notes: '', children: [] },
       ]},
   ],
   roadmap: [
     { id: 'ph1', phase: 1, title: 'Clarity & Foundation', timeframe: '2-3 weeks', color: '#f59e0b',
+      description: "Cut the noise and lock in the fundamentals. By the end of this phase you have one clear offer, one chosen niche, a working payment flow, and a calendar that protects both selling and building time. Nothing scales until this is solid.",
       items: [
-        { id: 'ph1-1', text: 'Pick ONE lead offer', done: false, notes: '', children: [
-          { id: 'ph1-1-a', text: 'Research 3 SMB niches', done: false, notes: '', children: [] },
-          { id: 'ph1-1-b', text: 'Pick the niche', done: false, notes: '', children: [] },
-          { id: 'ph1-1-c', text: 'Write the one-sentence pitch', done: false, notes: '', children: [] },
-        ] },
-        { id: 'ph1-2', text: 'Set Stripe + pricing', done: false, notes: '', children: [] },
-        { id: 'ph1-3', text: 'Audit subscriptions', done: false, notes: '', children: [] },
-        { id: 'ph1-4', text: 'Build 2-3 demos', done: false, notes: '', children: [] },
-        { id: 'ph1-5', text: 'Calendar block: AM sales / PM build', done: false, notes: '', children: [] },
+        { id: 'ph1-1', text: 'Pick ONE lead offer', done: false,
+          description: "Choose a single productized offer as your headline pitch. Everything else (custom AI work, deeper automations) becomes upsell once they're a client. One thing on the homepage. One sentence in the pitch. One outcome you're famous for.",
+          notes: '', children: [
+            { id: 'ph1-1-a', text: 'Research 3 SMB niches', done: false,
+              description: "Pick three industries where SMBs are tech-underserved but cash-flow positive (e.g., dental practices, law firms, home services, real estate teams, med spas). For each: average deal size, urgency of the problem, and how much existing access you have.",
+              notes: '', children: [] },
+            { id: 'ph1-1-b', text: 'Pick the niche', done: false,
+              description: 'Commit to ONE of the three. Single niche = sharper messaging, faster case studies, repeatable delivery. The instinct to keep options open is the trap that keeps you stuck.',
+              notes: '', children: [] },
+            { id: 'ph1-1-c', text: 'Write the one-sentence pitch', done: false,
+              description: "Distill the offer into one sentence a stranger gets in 5 seconds. Format: 'I help [niche] [outcome] using [mechanism].' Example: 'I help dental practices fill same-week cancellations with an AI follow-up system.'",
+              notes: '', children: [] },
+          ] },
+        { id: 'ph1-2', text: 'Set Stripe + pricing', done: false,
+          description: "Stripe account live, pricing tiers defined (single anchor + custom, or starter/standard/premium), payment link or invoice flow ready. Test it on yourself by sending and paying a $1 invoice. Friction at the close kills deals — you can't be Googling 'how to invoice' the moment someone says yes.",
+          notes: '', children: [] },
+        { id: 'ph1-3', text: 'Audit subscriptions', done: false,
+          description: 'List every recurring software/SaaS charge. Mark each Keep / Pause / Cancel. Goal: stretch the $2-4k runway by killing what is not actively earning. Common targets: unused AI tools, duplicated Zapier/Make accounts, paid-for-and-forgotten domains.',
+          notes: '', children: [] },
+        { id: 'ph1-4', text: 'Build 2-3 demos', done: false,
+          description: 'Record 2-3 polished demos of your lead offer running on a fictional or volunteer business in the chosen niche. Loom is fine. These replace pitch decks — show people the actual result, do not describe it. Same demo gets reused in cold outreach, on the landing page, and on sales calls.',
+          notes: '', children: [] },
+        { id: 'ph1-5', text: 'Calendar block: AM sales / PM build', done: false,
+          description: 'Lock 9am-1pm for revenue activity (outreach, calls, demos, follow-ups) and 1pm-5pm for delivery (building, client work). Treat both blocks as immovable meetings with yourself. Mixing modes destroys both — context-switching is the silent killer of solo operators.',
+          notes: '', children: [] },
       ],
       pathSteps: [
-        { id: 'ph1-ps1', text: 'Write down current offers', done: false, notes: '', children: [] },
-        { id: 'ph1-ps2', text: 'Decide focus or freedom approach', done: false, notes: '', children: [] },
+        { id: 'ph1-ps1', text: 'Write down current offers', done: false,
+          description: 'List everything you currently offer or pitch in any context — even casually. The starting point for cutting down to one. You cannot consolidate what you have not named.',
+          notes: '', children: [] },
+        { id: 'ph1-ps2', text: 'Decide focus or freedom approach', done: false,
+          description: 'Pick one strategic posture: (a) FOCUS — lock to one niche + one offer for 90 days and ignore everything else, or (b) FREEDOM — take whatever paying work comes through the door. Focus is slower to start but compounds into a real brand. Freedom feeds today but never builds equity. You need to consciously choose, not drift.',
+          notes: '', children: [] },
       ] },
     { id: 'ph2', phase: 2, title: 'Validate & Land', timeframe: 'Weeks 3-10', color: '#f97316',
+      description: 'Prove the offer + niche + price actually work together in market. The validation milestone: 5-10 paying clients, documented results, and a delivery process that gets faster each time. This phase is where you find out if the bet from Phase 1 was right.',
       items: [
-        { id: 'ph2-1', text: 'Run niche outreach', done: false, notes: '', children: [] },
-        { id: 'ph2-2', text: 'Land 5-10 paying clients', done: false, notes: '', children: [] },
-        { id: 'ph2-3', text: 'Build case studies', done: false, notes: '', children: [] },
-        { id: 'ph2-4', text: 'Create reusable templates', done: false, notes: '', children: [] },
+        { id: 'ph2-1', text: 'Run niche outreach', done: false,
+          description: 'Execute the outreach campaign with the chosen niche, refined offer, and recorded demos. Track reply rate, meetings booked, close rate. Tune the message weekly based on what got replies and what got ignored. Volume + iteration beats clever copy on day one.',
+          notes: '', children: [] },
+        { id: 'ph2-2', text: 'Land 5-10 paying clients', done: false,
+          description: 'Convert outreach into 5-10 paying clients at your real pricing (no friend-discount, no "let me prove it free"). This number is the validation threshold: enough to prove the offer/niche/price work together, enough to source 3-5 case studies, not so many you cannot deliver well.',
+          notes: '', children: [] },
+        { id: 'ph2-3', text: 'Build case studies', done: false,
+          description: 'Document every client outcome: starting problem, what you delivered, measurable result (revenue, time saved, leads), and a quote. Your most powerful asset for the next 5x clients — case studies in the niche close warm leads that cold pitches cannot.',
+          notes: '', children: [] },
+        { id: 'ph2-4', text: 'Create reusable templates', done: false,
+          description: "Turn delivery work into reusable assets — workflow templates, automation blueprints, onboarding docs, common email sequences. Each new client should ship faster than the last. By client #10 you should have a starter kit that cuts the first week's work in half.",
+          notes: '', children: [] },
       ],
       pathSteps: [
-        { id: 'ph2-ps1', text: 'Build prospect list (50 SMBs in niche)', done: false, notes: '', children: [] },
-        { id: 'ph2-ps2', text: 'Record Loom demo', done: false, notes: '', children: [] },
-        { id: 'ph2-ps3', text: 'First 10 outreach messages sent', done: false, notes: '', children: [] },
+        { id: 'ph2-ps1', text: 'Build prospect list (50 SMBs in niche)', done: false,
+          description: 'Compile 50 specific businesses in the chosen niche with decision-maker names, emails, and a "why now" hook for each (recent funding, expansion, hiring, bad reviews — any signal). Quality over quantity — a 50-person list with hooks outperforms a 500-person blast.',
+          notes: '', children: [] },
+        { id: 'ph2-ps2', text: 'Record Loom demo', done: false,
+          description: 'A 2-3 minute Loom showing the offer working — what they get, how it works, what it costs. Send it in cold/warm outreach instead of explaining over text. Show your face at the start for trust, then screen-share the actual product.',
+          notes: '', children: [] },
+        { id: 'ph2-ps3', text: 'First 10 outreach messages sent', done: false,
+          description: 'Manually send 10 highly personalized messages to test the script before scaling. Track who replies, what they push back on, what resonates. Tune subject line and first sentence — the rest matters less than you think.',
+          notes: '', children: [] },
       ] },
     { id: 'ph3', phase: 3, title: 'Scale & Systemize', timeframe: 'Months 3-6', color: '#ec4899',
+      description: 'Stop trading hours for dollars. Productize what clients keep asking for, hand off repeatable work, and let the business run beyond just your effort. The $10k MRR milestone is the proof point — recurring revenue, not project-by-project hustle.',
       items: [
-        { id: 'ph3-1', text: 'Productize most-requested workflows', done: false, notes: '', children: [] },
-        { id: 'ph3-2', text: 'Bring on VA / junior builder', done: false, notes: '', children: [] },
-        { id: 'ph3-3', text: 'Hit $10k MRR', done: false, notes: '', children: [] },
+        { id: 'ph3-1', text: 'Productize most-requested workflows', done: false,
+          description: 'Whatever clients keep asking for, package it as a fixed-scope, fixed-price product with a published page. Removes scoping calls, lets you sell faster, and is the foundation for handing delivery to someone else.',
+          notes: '', children: [] },
+        { id: 'ph3-2', text: 'Bring on VA / junior builder', done: false,
+          description: 'Hire a virtual assistant or junior dev to absorb repeatable work — onboarding tasks, basic builds, admin, follow-up emails. Frees your time for sales, high-leverage builds, and the work only you can do.',
+          notes: '', children: [] },
+        { id: 'ph3-3', text: 'Hit $10k MRR', done: false,
+          description: 'The headline outcome. Combined recurring revenue across all clients reaches $10k+/month. The threshold where this is a real business, not a side hustle — runway extends, decisions get easier, and you can hire more deliberately.',
+          notes: '', children: [] },
       ],
       pathSteps: [
-        { id: 'ph3-ps1', text: 'Document delivery process', done: false, notes: '', children: [] },
+        { id: 'ph3-ps1', text: 'Document delivery process', done: false,
+          description: 'Write down every step of how you deliver a client engagement — from "yes" to "done". Becomes the SOP for hires and the blueprint for productization. Loom walkthroughs work better than docs for most of it.',
+          notes: '', children: [] },
       ] },
     { id: 'ph4', phase: 4, title: 'Long-term Vision', timeframe: '6-18 months', color: '#a855f7',
+      description: 'You have proven the offer, hit recurring revenue, and built a delivery machine. Now pick the long game: stay a high-margin services agency, build a real product, or run both. Each path leads to a different company — choose with data, not guesses.',
       items: [
-        { id: 'ph4-1', text: 'Known AI shop in niche', done: false, notes: '', children: [] },
-        { id: 'ph4-2', text: 'Decide: agency / product / hybrid', done: false, notes: '', children: [] },
+        { id: 'ph4-1', text: 'Known AI shop in niche', done: false,
+          description: 'Become THE name people in your niche think of when they hear "AI". Inbound starts to outpace outbound. Speaking, content, referrals compound on top of the case studies from Phase 2. Less prospecting, better-fit clients, higher margins.',
+          notes: '', children: [] },
+        { id: 'ph4-2', text: 'Decide: agency / product / hybrid', done: false,
+          description: 'By now you have real data on what works. Choose: services agency (people-heavy, high margin, capped growth), product company (scalable, harder, slower revenue), or hybrid (services fund product development). Each path has different funding, team, and lifestyle implications — pick deliberately.',
+          notes: '', children: [] },
       ],
       pathSteps: [] },
   ],
@@ -110,7 +182,14 @@ const FALLBACK = {
 
 // ==================== SCHEMA / MIGRATION ====================
 function ensureChildren(item) {
-  return { ...item, children: (item.children || []).map(ensureChildren) };
+  return {
+    priority: null,
+    dueDate: null,
+    actualMinutes: 0,
+    description: '',
+    ...item,
+    children: (item.children || []).map(ensureChildren),
+  };
 }
 
 function ensureSchema(d) {
@@ -195,6 +274,62 @@ function countLeaves(items) {
   return { done, total };
 }
 
+// ==================== SCHEDULE / TIME HELPERS ====================
+function getDueDateInfo(dateStr) {
+  if (!dateStr) return null;
+  const due = new Date(dateStr + 'T23:59:59');
+  const now = new Date();
+  const days = Math.ceil((due - now) / 86400000);
+  if (days < 0) return { label: `${-days}d overdue`, status: 'overdue' };
+  if (days === 0) return { label: 'Today', status: 'today' };
+  if (days === 1) return { label: 'Tomorrow', status: 'soon' };
+  if (days <= 7) return { label: `${days}d`, status: 'week' };
+  return {
+    label: new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    status: 'later',
+  };
+}
+
+function formatDuration(ms) {
+  const sec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m`;
+  if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`;
+  return `${s}s`;
+}
+
+function priorityRank(p) {
+  return p == null ? 99 : p;
+}
+
+function sortByQueue(entries) {
+  return [...entries].sort((a, b) => {
+    const pa = priorityRank(a.item.priority);
+    const pb = priorityRank(b.item.priority);
+    if (pa !== pb) return pa - pb;
+    if (a.item.dueDate && b.item.dueDate) return a.item.dueDate.localeCompare(b.item.dueDate);
+    if (a.item.dueDate) return -1;
+    if (b.item.dueDate) return 1;
+    return 0;
+  });
+}
+
+function findItemAnywhere(data, id) {
+  for (const phase of data.roadmap || []) {
+    const inI = findInTree(phase.items || [], i => i.id === id);
+    if (inI) return { item: inI, phase, kind: 'initiative' };
+    const inS = findInTree(phase.pathSteps || [], i => i.id === id);
+    if (inS) return { item: inS, phase, kind: 'step' };
+  }
+  for (const branch of data.branches || []) {
+    const inB = findInTree(branch.items || [], i => i.id === id);
+    if (inB) return { item: inB, branch, kind: 'branchItem' };
+  }
+  return null;
+}
+
 // ==================== STATS ====================
 function computeStats(data) {
   let done = 0, total = 0;
@@ -218,24 +353,30 @@ function computeStats(data) {
   return { done, total, progress, daysIn, weeksIn, velocity };
 }
 
-function findNextActions(data, limit = 3) {
-  const next = [];
-  // First, look in path steps (they come first chronologically)
+function findNextActions(data, opts = {}) {
+  const { limit = 3, filter = 'all' } = opts;
+  const matchesFilter = (item) => {
+    const info = getDueDateInfo(item.dueDate);
+    if (filter === 'today') return info && (info.status === 'overdue' || info.status === 'today');
+    if (filter === 'week') return !info || info.status !== 'later';
+    return true;
+  };
+
+  // Collect undone leaves across all phases, preserving phase order.
+  const collected = [];
   for (const phase of data.roadmap || []) {
-    for (const step of (phase.pathSteps || [])) {
-      if (!step.done) {
-        next.push({ item: step, phase, kind: 'step' });
-        if (next.length >= limit) return next;
-      }
-    }
-    for (const init of (phase.items || [])) {
-      if (!init.done) {
-        next.push({ item: init, phase, kind: 'initiative' });
-        if (next.length >= limit) return next;
-      }
-    }
+    const entries = [
+      ...(phase.pathSteps || []).map(s => ({ item: s, phase, kind: 'step' })),
+      ...(phase.items || []).map(i => ({ item: i, phase, kind: 'initiative' })),
+    ];
+    const undone = entries.filter(e => !e.item.done && matchesFilter(e.item));
+    // Sort within each phase by priority then due date
+    collected.push(...sortByQueue(undone));
   }
-  return next;
+
+  // Promote priority-1 across phases ahead of unprioritized work
+  const prioritized = sortByQueue(collected);
+  return limit === Infinity ? prioritized : prioritized.slice(0, limit);
 }
 
 // ==================== MAIN APP ====================
@@ -247,6 +388,10 @@ export default function App() {
   const [savedFlash, setSavedFlash] = useState(false);
   const [todayCollapsed, setTodayCollapsed] = useState(false);
   const [celebration, setCelebration] = useState(null);
+  const [focusItemId, setFocusItemId] = useState(null);
+  const [focusStartedAt, setFocusStartedAt] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [wheelMode, setWheelMode] = useState('pan'); // 'pan' | 'zoom'
   const saveTimer = useRef(null);
   const sceneApiRef = useRef({});
 
@@ -273,7 +418,11 @@ export default function App() {
   }, [data, loaded]);
 
   const stats = useMemo(() => computeStats(data), [data]);
-  const nextActions = useMemo(() => findNextActions(data, 3), [data]);
+  const [nextUpFilter, setNextUpFilter] = useState('all');
+  const nextActions = useMemo(
+    () => findNextActions(data, { limit: 5, filter: nextUpFilter }),
+    [data, nextUpFilter]
+  );
   const nextAction = nextActions[0];
 
   // ============ Update functions ============
@@ -479,6 +628,146 @@ export default function App() {
     setFocused({ type: nextAction.kind === 'step' ? 'pathStep' : 'phaseItem', item: nextAction.item, phase: nextAction.phase });
   };
 
+  // ============ FOCUS MODE ============
+  const enterFocus = useCallback((itemId) => {
+    setFocusItemId(itemId);
+    setFocusStartedAt(Date.now());
+  }, []);
+
+  const exitFocus = useCallback(() => {
+    if (focusItemId && focusStartedAt) {
+      const elapsedMin = (Date.now() - focusStartedAt) / 60000;
+      if (elapsedMin > 0.05) {
+        updateNode(focusItemId, {
+          actualMinutes: Math.round(((findItemAnywhere(data, focusItemId)?.item.actualMinutes || 0) + elapsedMin) * 100) / 100,
+        });
+      }
+    }
+    setFocusItemId(null);
+    setFocusStartedAt(null);
+  }, [focusItemId, focusStartedAt, data]);
+
+  const pauseFocusTimer = useCallback(() => {
+    if (focusItemId && focusStartedAt) {
+      const elapsedMin = (Date.now() - focusStartedAt) / 60000;
+      updateNode(focusItemId, {
+        actualMinutes: Math.round(((findItemAnywhere(data, focusItemId)?.item.actualMinutes || 0) + elapsedMin) * 100) / 100,
+      });
+      setFocusStartedAt(null);
+    }
+  }, [focusItemId, focusStartedAt, data]);
+
+  const resumeFocusTimer = useCallback(() => {
+    if (focusItemId && !focusStartedAt) setFocusStartedAt(Date.now());
+  }, [focusItemId, focusStartedAt]);
+
+  // ============ SCHEDULE ============
+  const setNodeSchedule = (nodeId, changes) => updateNode(nodeId, changes);
+
+  // ============ REORDER (within parent list) ============
+  const reorderInList = (items, id, dir) => {
+    const idx = items.findIndex(i => i.id === id);
+    if (idx === -1) {
+      // recurse into children
+      return items.map(it => ({
+        ...it,
+        children: reorderInList(it.children || [], id, dir),
+      }));
+    }
+    const target = idx + dir;
+    if (target < 0 || target >= items.length) return items;
+    const copy = [...items];
+    [copy[idx], copy[target]] = [copy[target], copy[idx]];
+    return copy;
+  };
+
+  const reorderNode = (nodeId, dir) => {
+    setData(d => ({
+      ...d,
+      roadmap: d.roadmap.map(p => ({
+        ...p,
+        items: reorderInList(p.items, nodeId, dir),
+        pathSteps: reorderInList(p.pathSteps, nodeId, dir),
+      })),
+      branches: d.branches.map(b => ({ ...b, items: reorderInList(b.items, nodeId, dir) })),
+    }));
+  };
+
+  // ============ KEYBOARD SHORTCUTS ============
+  useEffect(() => {
+    const handleKey = (e) => {
+      const tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+      if (modal) return;
+
+      if (e.key === 'Escape') {
+        if (contextMenu) { setContextMenu(null); return; }
+        if (focusItemId) { exitFocus(); return; }
+        if (focused) { setFocused(null); return; }
+        return;
+      }
+
+      if (focusItemId) return; // focus mode owns the keyboard otherwise
+
+      if (e.key === '/') { e.preventDefault(); setModal('capture'); return; }
+
+      if (focused?.item) {
+        if (e.key === ' ' || e.key === 'x') {
+          e.preventDefault();
+          updateNode(focused.item.id, { done: !focused.item.done });
+          return;
+        }
+        if (e.key === 'f' || e.key === 'Enter') {
+          e.preventDefault();
+          enterFocus(focused.item.id);
+          return;
+        }
+      }
+
+      if (e.key === 'j' || e.key === 'k') {
+        e.preventDefault();
+        if (nextActions.length === 0) return;
+        const currId = focused?.item?.id;
+        let idx = nextActions.findIndex(na => na.item.id === currId);
+        const step = e.key === 'j' ? 1 : -1;
+        idx = idx === -1 ? 0 : Math.max(0, Math.min(nextActions.length - 1, idx + step));
+        const na = nextActions[idx];
+        if (na) setFocused({ type: na.kind === 'step' ? 'pathStep' : 'phaseItem', item: na.item, phase: na.phase });
+        return;
+      }
+
+      if (/^[1-9]$/.test(e.key)) {
+        const n = parseInt(e.key, 10);
+        if (n <= (data.roadmap?.length || 0)) flyTo(`phase${n}`);
+        return;
+      }
+
+      if (e.key === 'o') flyTo('origin');
+      if (e.key === 'v') flyTo('vision');
+      if (e.key === 'h') flyTo('overview');
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [focused, focusItemId, modal, contextMenu, nextActions, data, exitFocus, enterFocus]);
+
+  // Close context menu when clicking elsewhere
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    window.addEventListener('click', close);
+    window.addEventListener('scroll', close);
+    return () => {
+      window.removeEventListener('click', close);
+      window.removeEventListener('scroll', close);
+    };
+  }, [contextMenu]);
+
+  const openContextMenu = (e, item, phase, kind) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({ x: e.clientX, y: e.clientY, item, phase, kind });
+  };
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-body relative overflow-hidden">
       <style>{`
@@ -506,8 +795,13 @@ export default function App() {
         nextAction={nextAction}
         settings={data.settings}
         onFocus={setFocused}
+        onContextMenu={(ud, x, y) => setContextMenu({ x, y, item: ud.item, phase: ud.phase, kind: ud.type === 'pathStep' ? 'step' : ud.type === 'phaseItem' ? 'initiative' : ud.type })}
+        wheelMode={wheelMode}
+        onToggleWheelMode={() => setWheelMode(m => m === 'pan' ? 'zoom' : 'pan')}
         sceneApiRef={sceneApiRef}
       />
+
+      <WheelModeChip mode={wheelMode} onToggle={() => setWheelMode(m => m === 'pan' ? 'zoom' : 'pan')} />
 
       <TopBar
         stats={stats} savedFlash={savedFlash} metrics={data.metrics}
@@ -524,6 +818,8 @@ export default function App() {
         onToggleDone={(id, done) => updateNode(id, { done })}
         onFocus={(item, phase, kind) => setFocused({ type: kind === 'step' ? 'pathStep' : 'phaseItem', item, phase })}
         flyToNextAction={flyToNextAction}
+        filter={nextUpFilter} setFilter={setNextUpFilter}
+        onEnterFocus={enterFocus}
       />
 
       <ZoneNav flyTo={flyTo} addMilestone={() => addMilestone('')} />
@@ -574,7 +870,37 @@ export default function App() {
           deleteNode={deleteNode}
           deletePhase={deletePhase}
           moveNode={moveNode}
+          reorderNode={reorderNode}
+          enterFocus={enterFocus}
           flyToNextAction={flyToNextAction}
+        />
+      )}
+
+      {focusItemId && (
+        <FocusMode
+          data={data}
+          itemId={focusItemId}
+          startedAt={focusStartedAt}
+          nextActions={nextActions}
+          updateNode={updateNode}
+          addChild={addChild}
+          deleteNode={deleteNode}
+          enterFocus={enterFocus}
+          exitFocus={exitFocus}
+          pauseTimer={pauseFocusTimer}
+          resumeTimer={resumeFocusTimer}
+        />
+      )}
+
+      {contextMenu && (
+        <ContextMenu
+          menu={contextMenu}
+          onClose={() => setContextMenu(null)}
+          updateNode={updateNode}
+          deleteNode={deleteNode}
+          reorderNode={reorderNode}
+          enterFocus={enterFocus}
+          setFocused={setFocused}
         />
       )}
 
@@ -593,8 +919,12 @@ export default function App() {
 }
 
 /* ==================== 3D SCENE ==================== */
-function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
+function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheelMode, onToggleWheelMode, sceneApiRef }) {
   const mountRef = useRef(null);
+  const wheelModeRef = useRef(wheelMode);
+  useEffect(() => { wheelModeRef.current = wheelMode; }, [wheelMode]);
+  const toggleRef = useRef(onToggleWheelMode);
+  useEffect(() => { toggleRef.current = onToggleWheelMode; }, [onToggleWheelMode]);
 
   const completedItems = (data.roadmap || []).reduce((s, p) => {
     const i = countLeaves(p.items || []);
@@ -693,6 +1023,27 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       return sp;
     }
 
+    // Smaller label for node-level text (longer strings, less footprint)
+    function makeNodeLabel(text, color, opacity = 0.8) {
+      const trunc = text.length > 28 ? text.slice(0, 27) + '…' : text;
+      const cnv = document.createElement('canvas');
+      cnv.width = 1024; cnv.height = 96;
+      const ctx = cnv.getContext('2d');
+      ctx.font = '600 38px Geist, sans-serif';
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(0,0,0,0.95)';
+      ctx.shadowBlur = 14;
+      ctx.fillText(trunc, 512, 48);
+      const tex = new THREE.CanvasTexture(cnv);
+      tex.minFilter = THREE.LinearFilter;
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity, depthTest: false });
+      const sp = new THREE.Sprite(mat);
+      sp.scale.set(9, 0.85, 1);
+      return sp;
+    }
+
     // ============ JOURNEY PATH ============
     // Build curve through all phases
     const pathPoints = [new THREE.Vector3(0, Y_ORIGIN, 0)];
@@ -779,6 +1130,13 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
           dotMesh.userData = { type: 'pathStep', item: step, phase, phaseIdx };
           scene.add(dotMesh);
           pathStepMeshes.push(dotMesh);
+
+          // Step label
+          if (settings.showLabels) {
+            const stepLabel = makeNodeLabel(step.text, '#d4d4d8', step.done ? 0.55 : 0.85);
+            stepLabel.userData = { type: 'nodeLabel', itemRef: dotMesh, yOffset: 1.2 };
+            scene.add(stepLabel);
+          }
 
           // Glow for done
           if (step.done) {
@@ -903,6 +1261,13 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
         itemMeshGroup.push(iMesh);
         initiativeMeshes.push(iMesh);
 
+        // Initiative label
+        if (settings.showLabels) {
+          const initLabel = makeNodeLabel(init.text, initComplete ? '#fbbf24' : '#e4e4e7', initComplete ? 0.7 : 0.92);
+          initLabel.userData = { type: 'nodeLabel', itemRef: iMesh, yOffset: 1.6 };
+          scene.add(initLabel);
+        }
+
         // Done halo
         if (initComplete) {
           const dHalo = new THREE.Mesh(
@@ -1005,6 +1370,13 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       scene.add(bMesh);
       branchMeshes.push(bMesh);
 
+      // Branch label
+      if (settings.showLabels) {
+        const branchLabel = makeNodeLabel(branch.name, branch.color, 0.95);
+        branchLabel.userData = { type: 'nodeLabel', itemRef: bMesh, yOffset: 2.6 };
+        scene.add(branchLabel);
+      }
+
       const lineGeo = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, Y_VISION, 0), bMesh.position.clone()
       ]);
@@ -1027,6 +1399,13 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
         iMesh.userData = { type: 'branchItem', item, branch, branchIdx: i, itemIdx: j, orbitAngle: ia, orbitR: ir };
         scene.add(iMesh);
         branchItemMeshes.push(iMesh);
+
+        // Branch item label
+        if (settings.showLabels) {
+          const itemLabel = makeNodeLabel(item.text, branch.color, 0.75);
+          itemLabel.userData = { type: 'nodeLabel', itemRef: iMesh, yOffset: 1.0 };
+          scene.add(itemLabel);
+        }
       });
     });
 
@@ -1058,14 +1437,17 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       targetYaw: 0.2, targetPitch: 0.05,
       lookY: ZONES.overview.lookY, camY: ZONES.overview.camY, dist: ZONES.overview.dist,
       targetLookY: ZONES.overview.lookY, targetCamY: ZONES.overview.camY, targetDist: ZONES.overview.dist,
+      lookX: 0, lookZ: 0,
+      targetLookX: 0, targetLookZ: 0,
+      trackedMesh: null, // when set, lookAt follows this mesh each frame
     };
 
     function updateCameraPos() {
-      const x = Math.sin(camState.yaw) * Math.cos(camState.pitch) * camState.dist;
-      const z = Math.cos(camState.yaw) * Math.cos(camState.pitch) * camState.dist;
+      const x = camState.lookX + Math.sin(camState.yaw) * Math.cos(camState.pitch) * camState.dist;
+      const z = camState.lookZ + Math.cos(camState.yaw) * Math.cos(camState.pitch) * camState.dist;
       const y = camState.camY + Math.sin(camState.pitch) * camState.dist;
       camera.position.set(x, y, z);
-      camera.lookAt(0, camState.lookY, 0);
+      camera.lookAt(camState.lookX, camState.lookY, camState.lookZ);
     }
     updateCameraPos();
 
@@ -1076,6 +1458,12 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
     let lastTapTime = 0;
 
     const onDown = (e) => {
+      // Middle mouse button (scroll wheel click) toggles scroll mode
+      if (e.button === 1) {
+        e.preventDefault();
+        toggleRef.current?.();
+        return;
+      }
       const t = e.touches ? e.touches[0] : e;
       if (e.touches && e.touches.length === 2) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
@@ -1090,13 +1478,16 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       prevX = downX = t.clientX;
       prevY = downY = t.clientY;
     };
+
+    // Suppress the browser's middle-click auto-scroll (canvas attached below)
+    const onAuxClick = (e) => { if (e.button === 1) e.preventDefault(); };
     const onMove = (e) => {
       if (e.touches && e.touches.length === 2) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const ratio = touchStartDist / dist;
-        camState.targetDist = Math.max(15, Math.min(200, touchStartCamDist * ratio));
+        camState.targetDist = Math.max(6, Math.min(200, touchStartCamDist * ratio));
         e.preventDefault?.();
         return;
       }
@@ -1106,8 +1497,8 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       const dx = t.clientX - prevX;
       const dy = t.clientY - prevY;
       if (Math.abs(t.clientX - downX) > 5 || Math.abs(t.clientY - downY) > 5) isPotentialClick = false;
-      camState.targetYaw -= dx * 0.005;
-      camState.targetPitch = Math.max(-0.6, Math.min(0.6, camState.targetPitch + dy * 0.005));
+      camState.targetYaw -= dx * 0.0028;
+      camState.targetPitch = Math.max(-0.35, Math.min(0.35, camState.targetPitch + dy * 0.0028));
       prevX = t.clientX;
       prevY = t.clientY;
     };
@@ -1131,10 +1522,37 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
         ];
         const hits = ray.intersectObjects(targets);
         if (hits.length > 0) {
-          const ud = hits[0].object.userData;
-          if (ud.type) onFocus(ud);
+          const obj = hits[0].object;
+          const ud = obj.userData;
+          if (ud.type) {
+            onFocus(ud);
+            // Fly to the clicked node — gentle zoom that keeps context
+            if (ud.type !== 'climber') {
+              const zoomDist = (
+                ud.type === 'vision' ? 55 :
+                ud.type === 'phase' ? 38 :
+                ud.type === 'origin' ? 38 :
+                ud.type === 'branch' ? 30 :
+                24  // initiative, pathStep, branchItem
+              );
+              camState.targetDist = Math.min(camState.targetDist, zoomDist);
+              // Track orbiting items so the camera follows them; static items just recenter
+              const isOrbiting = (ud.type === 'phaseItem' || ud.type === 'branchItem');
+              camState.trackedMesh = isOrbiting ? obj : null;
+              if (!isOrbiting) {
+                const p = obj.position;
+                camState.targetLookX = p.x;
+                camState.targetLookY = p.y;
+                camState.targetLookZ = p.z;
+                camState.targetCamY = p.y;
+              }
+            } else {
+              camState.trackedMesh = null;
+            }
+          }
         } else {
           onFocus(null);
+          camState.trackedMesh = null;
         }
       }
       isDragging = false;
@@ -1142,6 +1560,7 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
     };
 
     const canvas = renderer.domElement;
+    canvas.addEventListener('auxclick', onAuxClick);
     canvas.addEventListener('mousedown', onDown);
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
@@ -1149,11 +1568,33 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
     canvas.addEventListener('touchmove', onMove, { passive: false });
     canvas.addEventListener('touchend', onUp);
 
-    // WHEEL: pan vertically (no modifier), zoom (ctrl/cmd modifier)
+    // WHEEL: pan vertically OR zoom-to-cursor, based on wheelMode (ctrl/cmd always zooms)
     const onWheel = (e) => {
       e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
-        camState.targetDist = Math.max(15, Math.min(200, camState.targetDist + e.deltaY * 0.15));
+      const zoomActive = e.ctrlKey || e.metaKey || wheelModeRef.current === 'zoom';
+      if (zoomActive) {
+        const oldDist = camState.dist;
+        const newDist = Math.max(6, Math.min(200, camState.targetDist + e.deltaY * 0.12));
+        // Cursor world point at lookAt depth (skip when tracking — would fight the tracker)
+        if (!camState.trackedMesh) {
+          const rect = renderer.domElement.getBoundingClientRect();
+          const mouse = new THREE.Vector2(
+            ((e.clientX - rect.left) / rect.width) * 2 - 1,
+            -((e.clientY - rect.top) / rect.height) * 2 + 1
+          );
+          const ray = new THREE.Raycaster();
+          ray.setFromCamera(mouse, camera);
+          const cursorWorld = camera.position.clone().add(ray.ray.direction.clone().multiplyScalar(oldDist));
+          const factor = 1 - newDist / oldDist; // positive when zooming in
+          camState.targetLookX += (cursorWorld.x - camState.lookX) * factor;
+          camState.targetLookY += (cursorWorld.y - camState.lookY) * factor;
+          camState.targetLookZ += (cursorWorld.z - camState.lookZ) * factor;
+          camState.targetCamY += (cursorWorld.y - camState.camY) * factor;
+          // Keep lookAt within sight of the central spine
+          camState.targetLookX = Math.max(-15, Math.min(15, camState.targetLookX));
+          camState.targetLookZ = Math.max(-15, Math.min(15, camState.targetLookZ));
+        }
+        camState.targetDist = newDist;
       } else {
         // Pan vertically through galaxy
         const panAmt = e.deltaY * 0.12;
@@ -1162,6 +1603,38 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       }
     };
     canvas.addEventListener('wheel', onWheel, { passive: false });
+
+    // DOUBLE-CLICK: toggle wheel mode (pan <-> zoom)
+    const onDblClick = (e) => {
+      e.preventDefault();
+      toggleRef.current?.();
+    };
+    canvas.addEventListener('dblclick', onDblClick);
+
+    // RIGHT-CLICK: open context menu on the hit mesh
+    const onContext = (e) => {
+      e.preventDefault();
+      const rect = renderer.domElement.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      const ray = new THREE.Raycaster();
+      ray.setFromCamera(mouse, camera);
+      const targets = [
+        ...phaseObjects.map(p => p.orb),
+        ...initiativeMeshes,
+        ...pathStepMeshes,
+      ];
+      const hits = ray.intersectObjects(targets);
+      if (hits.length > 0 && onContextMenu) {
+        const ud = hits[0].object.userData;
+        if (ud.type === 'phaseItem' || ud.type === 'pathStep' || ud.type === 'phase') {
+          onContextMenu(ud, e.clientX, e.clientY);
+        }
+      }
+    };
+    canvas.addEventListener('contextmenu', onContext);
 
     const onResize = () => {
       const w = mount.clientWidth, h = mount.clientHeight;
@@ -1215,18 +1688,23 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       scene.children.forEach(c => {
         if (c.userData?.itemRef) {
           c.position.copy(c.userData.itemRef.position);
-          c.lookAt(camera.position);
-          if (c.userData.type === 'doneHalo') c.rotateY(time * 0.5);
-          if (c.userData.type === 'childRing') c.rotateY(-time * 0.7);
-          if (c.userData.type === 'beacon') {
-            c.scale.setScalar(1 + Math.sin(time * 4) * 0.2);
-            c.material.opacity = 0.5 + Math.sin(time * 4) * 0.3;
+          if (c.userData.type === 'nodeLabel') {
+            // Sprites face the camera automatically; just lift above the orb
+            c.position.y += c.userData.yOffset || 1.5;
+          } else {
+            c.lookAt(camera.position);
+            if (c.userData.type === 'doneHalo') c.rotateY(time * 0.5);
+            if (c.userData.type === 'childRing') c.rotateY(-time * 0.7);
+            if (c.userData.type === 'beacon') {
+              c.scale.setScalar(1 + Math.sin(time * 4) * 0.2);
+              c.material.opacity = 0.5 + Math.sin(time * 4) * 0.3;
+            }
+            if (c.userData.type === 'beacon2') {
+              c.scale.setScalar(1 + Math.sin(time * 4 + 0.5) * 0.4);
+              c.material.opacity = 0.2 + Math.sin(time * 4 + 0.5) * 0.2;
+            }
+            if (c.userData.type === 'pathStepHalo') c.rotateY(time * 0.4);
           }
-          if (c.userData.type === 'beacon2') {
-            c.scale.setScalar(1 + Math.sin(time * 4 + 0.5) * 0.4);
-            c.material.opacity = 0.2 + Math.sin(time * 4 + 0.5) * 0.2;
-          }
-          if (c.userData.type === 'pathStepHalo') c.rotateY(time * 0.4);
         }
       });
 
@@ -1240,10 +1718,21 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
 
       if (!isDragging && settings.autoRotate) camState.targetYaw += 0.0005;
 
+      // Tracking: follow an orbiting node if one is set
+      if (camState.trackedMesh && camState.trackedMesh.position) {
+        const p = camState.trackedMesh.position;
+        camState.targetLookX = p.x;
+        camState.targetLookY = p.y;
+        camState.targetLookZ = p.z;
+        camState.targetCamY = p.y;
+      }
+
       camState.yaw += (camState.targetYaw - camState.yaw) * 0.1;
       camState.pitch += (camState.targetPitch - camState.pitch) * 0.1;
       camState.camY += (camState.targetCamY - camState.camY) * 0.08;
       camState.lookY += (camState.targetLookY - camState.lookY) * 0.08;
+      camState.lookX += (camState.targetLookX - camState.lookX) * 0.08;
+      camState.lookZ += (camState.targetLookZ - camState.lookZ) * 0.08;
       camState.dist += (camState.targetDist - camState.dist) * 0.08;
       updateCameraPos();
 
@@ -1255,11 +1744,14 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
     sceneApiRef.current.flyTo = (zone) => {
       const z = ZONES[zone];
       if (!z) return;
+      camState.trackedMesh = null;
       camState.targetCamY = z.camY;
       camState.targetLookY = z.lookY;
       camState.targetDist = z.dist;
       camState.targetYaw = z.yaw;
       camState.targetPitch = z.pitch;
+      camState.targetLookX = 0;
+      camState.targetLookZ = 0;
     };
     sceneApiRef.current.getScrollPos = () => {
       return (camState.lookY - Y_MIN) / (Y_MAX - Y_MIN);
@@ -1276,6 +1768,9 @@ function CosmicScene({ data, nextAction, settings, onFocus, sceneApiRef }) {
       window.removeEventListener('mouseup', onUp);
       window.removeEventListener('resize', onResize);
       canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('dblclick', onDblClick);
+      canvas.removeEventListener('auxclick', onAuxClick);
+      canvas.removeEventListener('contextmenu', onContext);
       if (mount && renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
       renderer.dispose();
       scene.traverse(obj => {
@@ -1342,7 +1837,7 @@ function IconButton({ onClick, icon: Icon, title }) {
 }
 
 /* ==================== TODAY PANEL ==================== */
-function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone, onFocus, flyToNextAction }) {
+function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone, onFocus, flyToNextAction, filter, setFilter, onEnterFocus }) {
   if (collapsed) {
     return (
       <button
@@ -1353,8 +1848,13 @@ function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone,
       </button>
     );
   }
+  const filterOpts = [
+    { key: 'today', label: 'Today' },
+    { key: 'week', label: 'Week' },
+    { key: 'all', label: 'All' },
+  ];
   return (
-    <div className="absolute left-3 top-20 z-20 w-64 max-w-[calc(100vw-100px)] slide-in-left">
+    <div className="absolute left-3 top-20 z-20 w-72 max-w-[calc(100vw-100px)] slide-in-left">
       <div className="backdrop-blur-xl bg-zinc-950/80 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl">
         <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800 bg-zinc-900/40">
           <div className="flex items-center gap-1.5">
@@ -1365,31 +1865,52 @@ function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone,
             <ChevronLeft className="w-3 h-3" />
           </button>
         </div>
+        <div className="flex gap-0.5 p-1.5 bg-zinc-900/30 border-b border-zinc-900">
+          {filterOpts.map(o => (
+            <button key={o.key} onClick={() => setFilter(o.key)}
+              className={`flex-1 px-2 py-1 rounded text-[10px] font-mono uppercase tracking-wider transition-colors ${filter === o.key ? 'bg-amber-500/20 text-amber-300' : 'text-zinc-500 hover:text-zinc-300'}`}>
+              {o.label}
+            </button>
+          ))}
+        </div>
         {nextActions.length === 0 ? (
           <div className="p-4 text-center">
             <div className="text-2xl mb-1">🎯</div>
-            <div className="text-xs text-zinc-300 font-medium">All done</div>
-            <div className="text-[10px] text-zinc-500 mt-1">Add more milestones</div>
+            <div className="text-xs text-zinc-300 font-medium">{filter === 'all' ? 'All done' : 'Nothing scheduled'}</div>
+            <div className="text-[10px] text-zinc-500 mt-1">{filter === 'all' ? 'Add more milestones' : 'Set due dates on items to see them here'}</div>
           </div>
         ) : (
-          <div className="p-2 space-y-1.5">
-            {nextActions.map((na, idx) => (
-              <div
-                key={na.item.id}
-                className={`group flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors ${idx === 0 ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-zinc-900/40 hover:bg-zinc-900/80 border border-transparent'}`}
-                onClick={() => onFocus(na.item, na.phase, na.kind)}
-              >
-                <button onClick={(e) => { e.stopPropagation(); onToggleDone(na.item.id, !na.item.done); }} className="flex-shrink-0 mt-0.5">
-                  <Circle className="w-3.5 h-3.5 text-zinc-600 hover:text-emerald-400 transition-colors" />
-                </button>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs text-zinc-100 leading-tight">{na.item.text}</div>
-                  <div className="text-[9px] font-mono uppercase tracking-wider mt-1" style={{ color: na.phase.color }}>
-                    {na.kind === 'step' ? 'Step' : 'Initiative'} · P{na.phase.phase}
+          <div className="p-2 space-y-1.5 max-h-[55vh] overflow-y-auto scrollbar-thin">
+            {nextActions.map((na, idx) => {
+              const due = getDueDateInfo(na.item.dueDate);
+              return (
+                <div
+                  key={na.item.id}
+                  className={`group flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors ${idx === 0 ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-zinc-900/40 hover:bg-zinc-900/80 border border-transparent'}`}
+                  onClick={() => onFocus(na.item, na.phase, na.kind)}
+                >
+                  <button onClick={(e) => { e.stopPropagation(); onToggleDone(na.item.id, !na.item.done); }} className="flex-shrink-0 mt-0.5" title="Toggle done">
+                    <Circle className="w-3.5 h-3.5 text-zinc-600 hover:text-emerald-400 transition-colors" />
+                  </button>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-zinc-100 leading-tight font-medium">{na.item.text}</div>
+                    {na.item.description && (
+                      <div className="text-[10px] text-zinc-400 leading-snug mt-1 line-clamp-2">{na.item.description}</div>
+                    )}
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: na.phase.color }}>
+                        {na.kind === 'step' ? 'Step' : 'Init'} · P{na.phase.phase}
+                      </span>
+                      {na.item.priority != null && <PriorityChip priority={na.item.priority} />}
+                      {due && <DueDateChip info={due} />}
+                    </div>
                   </div>
+                  <button onClick={(e) => { e.stopPropagation(); onEnterFocus(na.item.id); }} className="opacity-0 group-hover:opacity-100 p-1 rounded text-zinc-500 hover:text-amber-400 hover:bg-amber-500/10 transition-all" title="Focus mode (F)">
+                    <Telescope className="w-3 h-3" />
+                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <button onClick={flyToNextAction} className="w-full mt-1 px-2 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] font-mono uppercase tracking-wider flex items-center justify-center gap-1 transition-colors">
               <CornerUpRight className="w-3 h-3" />
               Fly to next
@@ -1402,6 +1923,27 @@ function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone,
         </div>
       </div>
     </div>
+  );
+}
+
+function PriorityChip({ priority }) {
+  if (priority == null) return null;
+  const colors = { 1: 'bg-red-500/20 text-red-300 border-red-500/40', 2: 'bg-amber-500/20 text-amber-300 border-amber-500/40', 3: 'bg-zinc-700/40 text-zinc-300 border-zinc-600/40' };
+  return <span className={`px-1 py-0 rounded text-[8px] font-mono font-bold tracking-wider border ${colors[priority]}`}>P{priority}</span>;
+}
+
+function DueDateChip({ info }) {
+  const styles = {
+    overdue: 'bg-red-500/20 text-red-300',
+    today: 'bg-amber-500/25 text-amber-200',
+    soon: 'bg-amber-500/15 text-amber-300',
+    week: 'bg-cyan-500/15 text-cyan-300',
+    later: 'bg-zinc-800 text-zinc-400',
+  };
+  return (
+    <span className={`px-1 py-0 rounded text-[8px] font-mono uppercase tracking-wider flex items-center gap-0.5 ${styles[info.status]}`}>
+      <Calendar className="w-2 h-2" />{info.label}
+    </span>
   );
 }
 
@@ -1434,6 +1976,26 @@ function ZoneNav({ flyTo, addMilestone }) {
         );
       })}
     </div>
+  );
+}
+
+/* ==================== WHEEL MODE CHIP ==================== */
+function WheelModeChip({ mode, onToggle }) {
+  const isZoom = mode === 'zoom';
+  return (
+    <button
+      onClick={onToggle}
+      title="Toggle: double-click map · wheel-click map · or click here"
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full backdrop-blur-xl border text-[10px] font-mono uppercase tracking-[0.15em] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 ${
+        isZoom
+          ? 'bg-amber-500/20 border-amber-500/50 text-amber-200 shadow-lg shadow-amber-500/20'
+          : 'bg-zinc-950/80 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+      }`}
+    >
+      {isZoom ? <Maximize2 className="w-3 h-3" /> : <Mouse className="w-3 h-3" />}
+      Scroll · {isZoom ? 'Zoom' : 'Pan'}
+      <span className="text-[9px] opacity-50 ml-1">2×click</span>
+    </button>
   );
 }
 
@@ -1633,6 +2195,8 @@ function PhaseCard(props) {
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: phase.color }} />
       </div>
 
+      <DescriptionField value={phase.description} onChange={d => updatePhase(phase.id, { description: d })} color={phase.color} />
+
       <div className="flex gap-1 mb-3 p-0.5 bg-zinc-900 rounded-lg">
         <TabBtn active={tab === 'initiatives'} onClick={() => setTab('initiatives')} label={`Orbiting · ${phase.items.length}`} sub="What to build" />
         <TabBtn active={tab === 'steps'} onClick={() => setTab('steps')} label={`Path · ${phase.pathSteps.length}`} sub="How to get here" />
@@ -1652,6 +2216,8 @@ function PhaseCard(props) {
             onAdd={(text) => addRootNode(phase.id, 'items', text)}
             onAddChild={(parentId, text) => props.addChild(parentId, text)}
             onFocus={(item) => setFocused({ type: 'phaseItem', item, phase })}
+            onReorder={props.reorderNode}
+            onEnterFocus={props.enterFocus}
             addLabel="Add initiative"
           />
         </>
@@ -1670,6 +2236,8 @@ function PhaseCard(props) {
             onAdd={(text) => addRootNode(phase.id, 'pathSteps', text)}
             onAddChild={(parentId, text) => props.addChild(parentId, text)}
             onFocus={(item) => setFocused({ type: 'pathStep', item, phase })}
+            onReorder={props.reorderNode}
+            onEnterFocus={props.enterFocus}
             addLabel="Add path step"
           />
         </>
@@ -1705,16 +2273,22 @@ function TabBtn({ active, onClick, label, sub }) {
 }
 
 function InitiativeCard(props) {
-  const { focused, updateNode, deleteNode, addChild, setFocused, data, moveNode } = props;
+  const { focused, updateNode, deleteNode, addChild, setFocused, data, moveNode, enterFocus } = props;
   const { item, phase } = focused;
   const [showMove, setShowMove] = useState(false);
 
   return (
     <>
-      <div className="text-[10px] font-mono uppercase tracking-[0.2em] mb-1" style={{ color: phase.color }}>
-        Orbiting · Phase {phase.phase}
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: phase.color }}>
+          Orbiting · Phase {phase.phase}
+        </div>
+        <button onClick={() => enterFocus(item.id)} className="px-2 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-mono uppercase tracking-wider flex items-center gap-1">
+          <Telescope className="w-3 h-3" />
+          Focus
+        </button>
       </div>
-      <div className="flex items-start gap-2 mb-3">
+      <div className="flex items-start gap-2 mb-2">
         <button onClick={() => updateNode(item.id, { done: !item.done })} className="mt-0.5 flex-shrink-0">
           {item.done ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Circle className="w-4 h-4 text-zinc-500 hover:text-emerald-400" />}
         </button>
@@ -1722,11 +2296,14 @@ function InitiativeCard(props) {
           <EditableText value={item.text} onChange={t => updateNode(item.id, { text: t })} multiline />
         </div>
       </div>
+      <ScheduleBar item={item} onChange={ch => updateNode(item.id, ch)} />
+
+      <DescriptionField value={item.description} onChange={d => updateNode(item.id, { description: d })} color={phase.color} />
 
       <div className="mb-3">
-        <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Notes</div>
+        <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Notes · scratchpad</div>
         <textarea value={item.notes || ''} onChange={e => updateNode(item.id, { notes: e.target.value })}
-          placeholder="Context, links, blockers…" rows={2}
+          placeholder="Working notes, links, blockers…" rows={2}
           className="w-full bg-zinc-900/60 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-zinc-700 resize-none" />
       </div>
 
@@ -1788,16 +2365,22 @@ function InitiativeCard(props) {
 }
 
 function PathStepCard(props) {
-  const { focused, updateNode, deleteNode, addChild, data, moveNode, setFocused } = props;
+  const { focused, updateNode, deleteNode, addChild, data, moveNode, setFocused, enterFocus } = props;
   const { item, phase } = focused;
   const [showMove, setShowMove] = useState(false);
 
   return (
     <>
-      <div className="text-[10px] font-mono uppercase tracking-[0.2em] mb-1" style={{ color: phase.color }}>
-        Path Step · Toward P{phase.phase}
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: phase.color }}>
+          Path Step · Toward P{phase.phase}
+        </div>
+        <button onClick={() => enterFocus(item.id)} className="px-2 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-mono uppercase tracking-wider flex items-center gap-1">
+          <Telescope className="w-3 h-3" />
+          Focus
+        </button>
       </div>
-      <div className="flex items-start gap-2 mb-3">
+      <div className="flex items-start gap-2 mb-2">
         <button onClick={() => updateNode(item.id, { done: !item.done })} className="mt-0.5 flex-shrink-0">
           {item.done ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Circle className="w-4 h-4 text-zinc-500 hover:text-emerald-400" />}
         </button>
@@ -1805,10 +2388,14 @@ function PathStepCard(props) {
           <EditableText value={item.text} onChange={t => updateNode(item.id, { text: t })} multiline />
         </div>
       </div>
+      <ScheduleBar item={item} onChange={ch => updateNode(item.id, ch)} />
+
+      <DescriptionField value={item.description} onChange={d => updateNode(item.id, { description: d })} color={phase.color} />
 
       <div className="mb-3">
+        <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Notes · scratchpad</div>
         <textarea value={item.notes || ''} onChange={e => updateNode(item.id, { notes: e.target.value })}
-          placeholder="Notes…" rows={2}
+          placeholder="Working notes, links, blockers…" rows={2}
           className="w-full bg-zinc-900/60 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-zinc-700 resize-none" />
       </div>
 
@@ -1899,9 +2486,13 @@ function BranchItemCard(props) {
       <div className="text-sm text-zinc-200 leading-relaxed mb-3">
         <EditableText value={item.text} onChange={t => updateNode(item.id, { text: t })} multiline />
       </div>
-      <textarea value={item.notes || ''} onChange={e => updateNode(item.id, { notes: e.target.value })}
-        placeholder="Notes…" rows={2}
-        className="w-full bg-zinc-900/60 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-zinc-700 resize-none mb-3" />
+      <DescriptionField value={item.description} onChange={d => updateNode(item.id, { description: d })} color={branch.color} />
+      <div className="mb-3">
+        <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Notes · scratchpad</div>
+        <textarea value={item.notes || ''} onChange={e => updateNode(item.id, { notes: e.target.value })}
+          placeholder="Working notes, links, blockers…" rows={2}
+          className="w-full bg-zinc-900/60 border border-zinc-800 rounded-lg p-2 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-zinc-700 resize-none" />
+      </div>
       <div className="mb-3">
         <div className="text-[9px] font-mono uppercase tracking-wider text-zinc-500 mb-1">Off-shoots ({(item.children || []).length})</div>
         <ChildTree
@@ -1923,7 +2514,7 @@ function BranchItemCard(props) {
 }
 
 /* ==================== NODE LIST + CHILD TREE (RECURSIVE) ==================== */
-function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAddChild, onFocus, addLabel }) {
+function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAddChild, onFocus, onReorder, onEnterFocus, onContextMenu, addLabel }) {
   const [adding, setAdding] = useState(false);
   const [newText, setNewText] = useState('');
   const handleAdd = () => { if (newText.trim()) { onAdd(newText.trim()); setNewText(''); setAdding(false); } };
@@ -1940,6 +2531,9 @@ function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAdd
           onDelete={onDelete}
           onAddChild={onAddChild}
           onFocus={onFocus}
+          onReorder={onReorder}
+          onEnterFocus={onEnterFocus}
+          onContextMenu={onContextMenu}
           depth={0}
         />
       ))}
@@ -1961,12 +2555,13 @@ function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAdd
   );
 }
 
-function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, depth }) {
+function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, depth, onReorder, onEnterFocus, onContextMenu }) {
   const [expanded, setExpanded] = useState(false);
   const [adding, setAdding] = useState(false);
   const [newChild, setNewChild] = useState('');
   const hasKids = (item.children || []).length > 0;
   const childCount = countLeaves(item.children || []);
+  const due = getDueDateInfo(item.dueDate);
 
   const handleAddChild = () => {
     if (newChild.trim()) { onAddChild(item.id, newChild.trim()); setNewChild(''); setAdding(false); setExpanded(true); }
@@ -1975,6 +2570,7 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
   return (
     <div>
       <div
+        onContextMenu={onContextMenu ? (e) => onContextMenu(e, item) : undefined}
         className={`group flex items-start gap-2 p-1.5 rounded-lg border transition-colors ${
           isTop ? 'bg-zinc-900/60 border-zinc-800' : 'bg-zinc-900/30 border-transparent hover:border-zinc-900'
         }`}
@@ -1988,18 +2584,41 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
             <ChevronRight className={`w-3 h-3 text-zinc-500 transition-transform ${expanded ? 'rotate-90' : ''}`} />
           </button>
         )}
-        <div className={`flex-1 min-w-0 text-xs leading-relaxed cursor-pointer ${item.done ? 'line-through text-zinc-600' : 'text-zinc-200'}`}
+        <div className={`flex-1 min-w-0 cursor-pointer ${item.done ? 'line-through text-zinc-600' : 'text-zinc-200'}`}
           onClick={() => onFocus(item)}>
-          {item.text}
-          {hasKids && (
-            <span className="ml-1.5 text-[9px] font-mono text-zinc-600">{childCount.done}/{childCount.total}</span>
+          <div className="text-xs leading-relaxed">
+            {item.text}
+            {hasKids && (
+              <span className="ml-1.5 text-[9px] font-mono text-zinc-600">{childCount.done}/{childCount.total}</span>
+            )}
+          </div>
+          {(item.priority != null || due) && (
+            <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+              {item.priority != null && <PriorityChip priority={item.priority} />}
+              {due && <DueDateChip info={due} />}
+            </div>
           )}
         </div>
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => setAdding(true)} className="p-0.5 text-zinc-600 hover:text-amber-400" title="Add off-shoot">
+          {onReorder && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); onReorder(item.id, -1); }} className="p-0.5 text-zinc-600 hover:text-zinc-300" title="Move up">
+                <ChevronUp className="w-2.5 h-2.5" />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); onReorder(item.id, 1); }} className="p-0.5 text-zinc-600 hover:text-zinc-300" title="Move down">
+                <ChevronDown className="w-2.5 h-2.5" />
+              </button>
+            </>
+          )}
+          {onEnterFocus && (
+            <button onClick={(e) => { e.stopPropagation(); onEnterFocus(item.id); }} className="p-0.5 text-zinc-600 hover:text-amber-400" title="Focus (F)">
+              <Telescope className="w-2.5 h-2.5" />
+            </button>
+          )}
+          <button onClick={(e) => { e.stopPropagation(); setAdding(true); }} className="p-0.5 text-zinc-600 hover:text-amber-400" title="Add off-shoot">
             <GitBranch className="w-2.5 h-2.5" />
           </button>
-          <button onClick={() => onDelete(item.id)} className="p-0.5 text-zinc-600 hover:text-red-400">
+          <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="p-0.5 text-zinc-600 hover:text-red-400">
             <Trash2 className="w-2.5 h-2.5" />
           </button>
         </div>
@@ -2026,6 +2645,9 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
               onDelete={onDelete}
               onAddChild={onAddChild}
               onFocus={onFocus}
+              onReorder={onReorder}
+              onEnterFocus={onEnterFocus}
+              onContextMenu={onContextMenu}
               depth={depth + 1}
             />
           ))}
@@ -2035,7 +2657,7 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
   );
 }
 
-function ChildTree({ children, color, onUpdate, onDelete, onAddChild, onAddRoot, hideToggleDone }) {
+function ChildTree({ children, color, onUpdate, onDelete, onAddChild, onAddRoot, onReorder, onEnterFocus, hideToggleDone }) {
   const [adding, setAdding] = useState(false);
   const [newText, setNewText] = useState('');
   const handleAdd = () => { if (newText.trim()) { onAddRoot(newText.trim()); setNewText(''); setAdding(false); } };
@@ -2051,6 +2673,8 @@ function ChildTree({ children, color, onUpdate, onDelete, onAddChild, onAddRoot,
           onDelete={onDelete}
           onAddChild={onAddChild}
           onFocus={() => {}}
+          onReorder={onReorder}
+          onEnterFocus={onEnterFocus}
           depth={0}
         />
       ))}
@@ -2399,10 +3023,22 @@ function SettingsModal({ data, toggleSetting, onResetData, onClose }) {
               Controls
             </div>
             <ul className="space-y-1 text-[11px] text-zinc-300">
-              <li className="flex justify-between"><span>Scroll</span><span className="text-zinc-500">Pan vertically</span></li>
+              <li className="flex justify-between"><span>Scroll</span><span className="text-zinc-500">Pan vertically · Zoom in zoom mode</span></li>
               <li className="flex justify-between"><span>Drag</span><span className="text-zinc-500">Rotate view</span></li>
-              <li className="flex justify-between"><span>Pinch / Ctrl+Scroll</span><span className="text-zinc-500">Zoom</span></li>
-              <li className="flex justify-between"><span>Tap orb</span><span className="text-zinc-500">Edit details</span></li>
+              <li className="flex justify-between"><span>Pinch / Ctrl+Scroll</span><span className="text-zinc-500">Zoom (always)</span></li>
+              <li className="flex justify-between"><span>Double-click / wheel click</span><span className="text-zinc-500">Toggle scroll mode</span></li>
+              <li className="flex justify-between"><span>Click orb</span><span className="text-zinc-500">Open details</span></li>
+              <li className="flex justify-between"><span>Right-click orb</span><span className="text-zinc-500">Context menu</span></li>
+            </ul>
+            <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mt-3 mb-1.5">Keyboard</div>
+            <ul className="space-y-1 text-[11px] text-zinc-300">
+              <li className="flex justify-between"><span className="font-mono">J / K</span><span className="text-zinc-500">Next / prev in queue</span></li>
+              <li className="flex justify-between"><span className="font-mono">F</span><span className="text-zinc-500">Focus mode on selected</span></li>
+              <li className="flex justify-between"><span className="font-mono">Space / X</span><span className="text-zinc-500">Toggle done</span></li>
+              <li className="flex justify-between"><span className="font-mono">/</span><span className="text-zinc-500">Quick capture</span></li>
+              <li className="flex justify-between"><span className="font-mono">1–4</span><span className="text-zinc-500">Fly to phase</span></li>
+              <li className="flex justify-between"><span className="font-mono">O / V / H</span><span className="text-zinc-500">Origin / Vision / Overview</span></li>
+              <li className="flex justify-between"><span className="font-mono">Esc</span><span className="text-zinc-500">Close / exit focus</span></li>
             </ul>
           </div>
           <div className="pt-3 mt-3 border-t border-zinc-800">
@@ -2438,5 +3074,359 @@ function Toggle({ label, sub, value, onChange }) {
         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-zinc-50 transition-all ${value ? 'left-4' : 'left-0.5'}`} />
       </div>
     </button>
+  );
+}
+
+/* ==================== DESCRIPTION FIELD ==================== */
+function DescriptionField({ value, onChange, color = '#fbbf24' }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value || '');
+  useEffect(() => setDraft(value || ''), [value]);
+
+  const save = () => {
+    if (draft.trim() !== (value || '')) onChange(draft.trim());
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="mb-3 rounded-xl border" style={{ borderColor: color + '50', background: color + '08' }}>
+        <div className="px-2.5 pt-2 text-[9px] font-mono uppercase tracking-wider" style={{ color }}>
+          What this means · what it entails
+        </div>
+        <textarea autoFocus value={draft} onChange={e => setDraft(e.target.value)} onBlur={save}
+          onKeyDown={e => { if (e.key === 'Escape') { setDraft(value || ''); setEditing(false); } if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) save(); }}
+          rows={4}
+          className="w-full bg-transparent p-2.5 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none resize-y"
+          placeholder="Explain what this means and what accomplishing it looks like…" />
+      </div>
+    );
+  }
+  return (
+    <div onClick={() => setEditing(true)}
+      className="mb-3 p-2.5 rounded-xl border cursor-text transition-colors"
+      style={{ borderColor: (value ? color + '30' : '#27272a'), background: value ? color + '06' : 'rgba(24,24,27,0.4)' }}>
+      <div className="text-[9px] font-mono uppercase tracking-wider mb-1" style={{ color: value ? color : '#71717a' }}>
+        What this means · what it entails
+      </div>
+      {value ? (
+        <p className="text-sm leading-relaxed text-zinc-200 whitespace-pre-wrap">{value}</p>
+      ) : (
+        <p className="text-xs text-zinc-600 italic">Tap to describe what this means and what accomplishing it looks like.</p>
+      )}
+    </div>
+  );
+}
+
+/* ==================== SCHEDULE BAR ==================== */
+function ScheduleBar({ item, onChange }) {
+  const [showDate, setShowDate] = useState(false);
+  const due = getDueDateInfo(item.dueDate);
+  const setQuick = (offsetDays) => {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    onChange({ dueDate: d.toISOString().slice(0, 10) });
+    setShowDate(false);
+  };
+  return (
+    <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+      <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-zinc-900/60 border border-zinc-800">
+        {[1, 2, 3].map(p => (
+          <button key={p} onClick={() => onChange({ priority: item.priority === p ? null : p })}
+            title={`Priority ${p}`}
+            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-colors ${
+              item.priority === p
+                ? (p === 1 ? 'bg-red-500/30 text-red-200' : p === 2 ? 'bg-amber-500/30 text-amber-200' : 'bg-zinc-700 text-zinc-200')
+                : 'text-zinc-500 hover:text-zinc-300'
+            }`}>P{p}</button>
+        ))}
+      </div>
+      <div className="relative">
+        <button onClick={() => setShowDate(!showDate)}
+          className={`px-2 py-1 rounded-md border text-[10px] font-mono uppercase tracking-wider flex items-center gap-1 ${
+            due
+              ? (due.status === 'overdue' ? 'bg-red-500/15 border-red-500/40 text-red-300' :
+                 due.status === 'today' ? 'bg-amber-500/20 border-amber-500/40 text-amber-200' :
+                 'bg-zinc-900/60 border-zinc-800 text-zinc-300')
+              : 'bg-zinc-900/60 border-zinc-800 text-zinc-500 hover:text-zinc-300'
+          }`}>
+          <Calendar className="w-2.5 h-2.5" />
+          {due ? due.label : 'No date'}
+        </button>
+        {showDate && (
+          <div className="absolute top-full mt-1 left-0 z-30 p-2 rounded-lg bg-zinc-900 border border-zinc-800 shadow-2xl fade-in space-y-1 min-w-[180px]">
+            <button onClick={() => setQuick(0)} className="w-full text-left px-2 py-1 rounded text-[11px] hover:bg-zinc-800">Today</button>
+            <button onClick={() => setQuick(1)} className="w-full text-left px-2 py-1 rounded text-[11px] hover:bg-zinc-800">Tomorrow</button>
+            <button onClick={() => setQuick(7)} className="w-full text-left px-2 py-1 rounded text-[11px] hover:bg-zinc-800">Next week</button>
+            <input type="date" value={item.dueDate || ''}
+              onChange={e => { onChange({ dueDate: e.target.value || null }); setShowDate(false); }}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-[11px] text-zinc-200 focus:outline-none" />
+            {item.dueDate && (
+              <button onClick={() => { onChange({ dueDate: null }); setShowDate(false); }}
+                className="w-full text-left px-2 py-1 rounded text-[10px] text-red-400 hover:bg-red-500/10">Clear date</button>
+            )}
+          </div>
+        )}
+      </div>
+      {item.actualMinutes > 0 && (
+        <span className="text-[9px] font-mono text-zinc-500 flex items-center gap-0.5">
+          <Clock className="w-2.5 h-2.5" />
+          {item.actualMinutes >= 60 ? `${Math.floor(item.actualMinutes / 60)}h ${Math.round(item.actualMinutes % 60)}m` : `${Math.round(item.actualMinutes)}m`}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* ==================== CONTEXT MENU ==================== */
+function ContextMenu({ menu, onClose, updateNode, deleteNode, reorderNode, enterFocus, setFocused }) {
+  const { x, y, item, phase, kind } = menu;
+  if (!item) return null;
+  const isStep = kind === 'step' || kind === 'pathStep';
+  const isInit = kind === 'initiative' || kind === 'phaseItem';
+
+  const wrap = (fn) => (e) => { e.stopPropagation(); fn(); onClose(); };
+  const px = Math.min(x, window.innerWidth - 200);
+  const py = Math.min(y, window.innerHeight - 280);
+
+  return (
+    <div
+      className="fixed z-50 min-w-[180px] py-1 rounded-lg bg-zinc-900 border border-zinc-700 shadow-2xl fade-in"
+      style={{ left: px, top: py }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <MenuItem icon={Eye} label="Open details" onClick={wrap(() => setFocused({ type: isStep ? 'pathStep' : 'phaseItem', item, phase }))} />
+      {(isStep || isInit) && (
+        <>
+          <MenuItem icon={Telescope} label="Focus mode" shortcut="F" onClick={wrap(() => enterFocus(item.id))} />
+          <MenuItem icon={item.done ? Circle : CheckCircle2} label={item.done ? 'Mark undone' : 'Mark done'} shortcut="Space" onClick={wrap(() => updateNode(item.id, { done: !item.done }))} />
+          <div className="my-1 border-t border-zinc-800" />
+          <MenuItem icon={ChevronUp} label="Move up" onClick={wrap(() => reorderNode(item.id, -1))} />
+          <MenuItem icon={ChevronDown} label="Move down" onClick={wrap(() => reorderNode(item.id, 1))} />
+          <div className="my-1 border-t border-zinc-800" />
+          <div className="px-3 py-1 text-[9px] font-mono uppercase tracking-wider text-zinc-500">Priority</div>
+          <div className="px-2 pb-1 flex gap-1">
+            {[1, 2, 3, null].map(p => (
+              <button key={p ?? 'none'} onClick={wrap(() => updateNode(item.id, { priority: p }))}
+                className={`flex-1 px-1 py-0.5 rounded text-[10px] font-mono font-bold ${
+                  item.priority === p
+                    ? 'bg-amber-500 text-zinc-950'
+                    : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+                }`}>
+                {p == null ? '—' : `P${p}`}
+              </button>
+            ))}
+          </div>
+          <div className="my-1 border-t border-zinc-800" />
+          <MenuItem icon={Trash2} label="Delete" danger onClick={wrap(() => deleteNode(item.id))} />
+        </>
+      )}
+      {kind === 'phase' && (
+        <MenuItem icon={Eye} label="Open phase" onClick={wrap(() => setFocused({ type: 'phase', phase }))} />
+      )}
+    </div>
+  );
+}
+
+function MenuItem({ icon: Icon, label, shortcut, onClick, danger }) {
+  return (
+    <button onClick={onClick}
+      className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-zinc-800 transition-colors ${danger ? 'text-red-400 hover:bg-red-500/10' : 'text-zinc-200'}`}>
+      <Icon className="w-3 h-3" />
+      <span className="flex-1 text-left">{label}</span>
+      {shortcut && <span className="text-[9px] font-mono text-zinc-500">{shortcut}</span>}
+    </button>
+  );
+}
+
+/* ==================== FOCUS MODE ==================== */
+function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild, deleteNode, enterFocus, exitFocus, pauseTimer, resumeTimer }) {
+  const found = findItemAnywhere(data, itemId);
+  const [now, setNow] = useState(Date.now());
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [breakdownText, setBreakdownText] = useState('');
+  const [newSub, setNewSub] = useState('');
+
+  useEffect(() => {
+    if (!startedAt) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+
+  if (!found) {
+    return (
+      <div className="fixed inset-0 z-50 bg-zinc-950/98 backdrop-blur-2xl flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-zinc-400 mb-3">Item not found</p>
+          <button onClick={exitFocus} className="px-4 py-2 rounded-lg bg-zinc-800 text-sm">Back to map</button>
+        </div>
+      </div>
+    );
+  }
+
+  const { item, phase, kind } = found;
+  const runningMs = startedAt ? now - startedAt : 0;
+  const totalMs = (item.actualMinutes || 0) * 60000 + runningMs;
+  const due = getDueDateInfo(item.dueDate);
+  const subtasks = item.children || [];
+  const subDone = subtasks.filter(s => s.done).length;
+
+  const handleBreakdown = () => {
+    const lines = breakdownText.split('\n').map(s => s.trim()).filter(Boolean);
+    lines.forEach(line => addChild(item.id, line));
+    setBreakdownText('');
+    setBreakdownOpen(false);
+  };
+
+  const handleAddSub = () => {
+    if (newSub.trim()) { addChild(item.id, newSub.trim()); setNewSub(''); }
+  };
+
+  const handleDoneNext = () => {
+    updateNode(item.id, { done: true });
+    const next = nextActions.find(na => na.item.id !== item.id && !na.item.done);
+    if (next) {
+      setTimeout(() => enterFocus(next.item.id), 50);
+    } else {
+      exitFocus();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-zinc-950/98 backdrop-blur-2xl overflow-y-auto" onClick={(e) => { if (e.target === e.currentTarget) exitFocus(); }}>
+      <div className="min-h-full flex items-start justify-center p-4 sm:p-8">
+        <div className="w-full max-w-2xl slide-up">
+          <div className="flex items-center justify-between mb-6">
+            <button onClick={exitFocus} className="px-3 py-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-300 flex items-center gap-1.5">
+              <ChevronLeft className="w-3.5 h-3.5" />
+              Back to map
+            </button>
+            <div className="text-[10px] font-mono uppercase tracking-[0.2em] truncate" style={{ color: phase?.color }}>
+              {phase ? `P${phase.phase} · ${phase.title}` : ''}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <div className="font-display text-3xl sm:text-4xl font-bold leading-tight mb-3">
+              <EditableText value={item.text} onChange={t => updateNode(item.id, { text: t })} multiline displayClass="text-zinc-100" />
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">{kind === 'step' ? 'Path Step' : 'Initiative'}</span>
+              {item.priority != null && <PriorityChip priority={item.priority} />}
+              {due && <DueDateChip info={due} />}
+              <ScheduleBar item={item} onChange={ch => updateNode(item.id, ch)} />
+            </div>
+          </div>
+
+          <DescriptionField value={item.description} onChange={d => updateNode(item.id, { description: d })} color={phase?.color || '#fbbf24'} />
+
+          <div className="mb-4">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-1.5">Notes · scratchpad</div>
+            <textarea value={item.notes || ''} onChange={e => updateNode(item.id, { notes: e.target.value })}
+              placeholder="Working notes, links, what you're trying to figure out…" rows={3}
+              className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-amber-500/40 rounded-xl p-3 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none resize-y" />
+          </div>
+
+          <div className="mb-4 p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
+                Steps · {subDone}/{subtasks.length}
+              </div>
+              <button onClick={() => setBreakdownOpen(!breakdownOpen)} className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 hover:text-amber-300 flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                Break into steps
+              </button>
+            </div>
+
+            {breakdownOpen && (
+              <div className="mb-3 p-2 rounded-lg bg-zinc-950 border border-amber-500/30 fade-in">
+                <div className="text-[10px] text-zinc-400 mb-1.5">One step per line:</div>
+                <textarea autoFocus value={breakdownText} onChange={e => setBreakdownText(e.target.value)}
+                  placeholder={`Research 3 options\nDraft outline\nWrite v1\nReview & ship`}
+                  rows={5}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs focus:outline-none focus:border-amber-500/40 resize-none" />
+                <div className="flex gap-1.5 mt-2">
+                  <button onClick={() => setBreakdownOpen(false)} className="flex-1 px-2 py-1 rounded bg-zinc-900 text-[10px] text-zinc-400">Cancel</button>
+                  <button onClick={handleBreakdown} disabled={!breakdownText.trim()} className="flex-1 px-2 py-1 rounded bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-zinc-950 text-[10px] font-semibold">Add all</button>
+                </div>
+              </div>
+            )}
+
+            {subtasks.length === 0 && !breakdownOpen && (
+              <p className="text-xs text-zinc-500 italic mb-3">No steps yet. Add some below, or click "Break into steps" to add several at once.</p>
+            )}
+
+            <div className="space-y-1.5">
+              {subtasks.map(sub => (
+                <FocusSubtaskRow key={sub.id} sub={sub} onUpdate={updateNode} onDelete={deleteNode} onEnterFocus={enterFocus} />
+              ))}
+            </div>
+
+            <div className="flex gap-1.5 mt-2">
+              <input value={newSub} onChange={e => setNewSub(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleAddSub(); }}
+                placeholder="Add a step…"
+                className="flex-1 bg-zinc-950 border border-zinc-800 focus:border-amber-500/40 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none" />
+              <button onClick={handleAddSub} disabled={!newSub.trim()} className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 text-zinc-200 text-xs">Add</button>
+            </div>
+          </div>
+
+          <div className="mb-4 p-4 rounded-2xl bg-zinc-900/40 border border-zinc-800 flex items-center justify-between">
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-0.5">Time on task</div>
+              <div className={`font-mono text-2xl font-bold ${startedAt ? 'text-amber-300' : 'text-zinc-300'}`}>{formatDuration(totalMs)}</div>
+            </div>
+            <button onClick={startedAt ? pauseTimer : resumeTimer}
+              className={`px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center gap-2 ${
+                startedAt
+                  ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
+                  : 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold'
+              }`}>
+              {startedAt ? <><Pause className="w-3.5 h-3.5" />Pause</> : <><Play className="w-3.5 h-3.5" />Resume</>}
+            </button>
+          </div>
+
+          <div className="flex gap-2">
+            <button onClick={exitFocus} className="flex-1 px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-sm text-zinc-300">
+              Save & exit
+            </button>
+            <button onClick={handleDoneNext} className="flex-[2] px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-zinc-950 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4" />
+              Done — next task →
+            </button>
+          </div>
+
+          <div className="text-center mt-4 text-[10px] font-mono uppercase tracking-wider text-zinc-600">
+            Esc to exit · Space to toggle done
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FocusSubtaskRow({ sub, onUpdate, onDelete, onEnterFocus }) {
+  const hasKids = (sub.children || []).length > 0;
+  const kidsCount = countLeaves(sub.children || []);
+  return (
+    <div className="group flex items-start gap-2 p-1.5 rounded-lg bg-zinc-950/60 hover:bg-zinc-950 border border-zinc-900">
+      <button onClick={() => onUpdate(sub.id, { done: !sub.done })} className="flex-shrink-0 mt-0.5">
+        {sub.done ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Circle className="w-4 h-4 text-zinc-600 hover:text-emerald-400" />}
+      </button>
+      <div className={`flex-1 text-sm ${sub.done ? 'line-through text-zinc-600' : 'text-zinc-200'}`}>
+        {sub.text}
+        {hasKids && (
+          <span className="ml-1.5 text-[10px] font-mono text-zinc-600">{kidsCount.done}/{kidsCount.total}</span>
+        )}
+      </div>
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button onClick={() => onEnterFocus(sub.id)} className="p-1 text-zinc-600 hover:text-amber-400" title="Focus this sub-step">
+          <Telescope className="w-3 h-3" />
+        </button>
+        <button onClick={() => onDelete(sub.id)} className="p-1 text-zinc-600 hover:text-red-400">
+          <Trash2 className="w-3 h-3" />
+        </button>
+      </div>
+    </div>
   );
 }
