@@ -1226,7 +1226,7 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
       scene.add(ring);
 
       if (settings.showLabels) {
-        const lbl = makeLabel(`P${phase.phase} · ${phase.title}`, phase.color, 0.85);
+        const lbl = makeLabel(`Ph${phase.phase} · ${phase.title}`, phase.color, 0.85);
         lbl.position.set(0, y + 5.5, 0);
         scene.add(lbl);
       }
@@ -1430,6 +1430,26 @@ function CosmicScene({ data, nextAction, settings, onFocus, onContextMenu, wheel
     const climberPos = curve.getPoint(Math.max(progress, 0.005));
     climberGroup.position.copy(climberPos);
     scene.add(climberGroup);
+
+    // Small "↑ HERE" marker beside the climber
+    if (settings.showLabels) {
+      const hereCnv = document.createElement('canvas');
+      hereCnv.width = 256; hereCnv.height = 96;
+      const hctx = hereCnv.getContext('2d');
+      hctx.font = 'bold 40px Geist, sans-serif';
+      hctx.fillStyle = '#fbbf24';
+      hctx.textAlign = 'center';
+      hctx.textBaseline = 'middle';
+      hctx.shadowColor = 'rgba(0,0,0,0.95)';
+      hctx.shadowBlur = 12;
+      hctx.fillText('↑ HERE', 128, 48);
+      const hereTex = new THREE.CanvasTexture(hereCnv);
+      hereTex.minFilter = THREE.LinearFilter;
+      const hereSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: hereTex, transparent: true, opacity: 0.85, depthTest: false }));
+      hereSprite.scale.set(3, 1.1, 1);
+      hereSprite.userData = { type: 'nodeLabel', itemRef: climberGroup, yOffset: 1.8 };
+      scene.add(hereSprite);
+    }
 
     // ============ CAMERA STATE ============
     const camState = {
@@ -1830,9 +1850,11 @@ function TopBar({ stats, savedFlash, metrics, onSettings, onMetrics, onJournal, 
 
 function IconButton({ onClick, icon: Icon, title }) {
   return (
-    <button onClick={onClick} title={title} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 transition-colors">
-      <Icon className="w-3.5 h-3.5" />
-    </button>
+    <Tooltip label={title} side="bottom">
+      <button onClick={onClick} aria-label={title} className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 transition-colors">
+        <Icon className="w-3.5 h-3.5" />
+      </button>
+    </Tooltip>
   );
 }
 
@@ -1899,7 +1921,7 @@ function TodayPanel({ nextActions, stats, collapsed, setCollapsed, onToggleDone,
                     )}
                     <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                       <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: na.phase.color }}>
-                        {na.kind === 'step' ? 'Step' : 'Init'} · P{na.phase.phase}
+                        {na.kind === 'step' ? 'Step' : 'Init'} · Ph{na.phase.phase}
                       </span>
                       {na.item.priority != null && <PriorityChip priority={na.item.priority} />}
                       {due && <DueDateChip info={due} />}
@@ -2347,14 +2369,14 @@ function InitiativeCard(props) {
                 disabled={p.id === phase.id}
               >
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                <span className="flex-1">P{p.phase} initiative</span>
+                <span className="flex-1">Ph{p.phase} initiative</span>
               </button>
               <button
                 onClick={() => { moveNode(item.id, p.id, 'pathSteps'); setShowMove(false); setFocused(null); }}
                 className="w-full text-left px-2 py-1 rounded text-xs hover:bg-zinc-800 flex items-center gap-2 text-zinc-400"
               >
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                <span className="flex-1">→ P{p.phase} path step</span>
+                <span className="flex-1">→ Ph{p.phase} path step</span>
               </button>
             </div>
           ))}
@@ -2373,7 +2395,7 @@ function PathStepCard(props) {
     <>
       <div className="flex items-center justify-between gap-2 mb-1">
         <div className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: phase.color }}>
-          Path Step · Toward P{phase.phase}
+          Path Step · Toward Ph{phase.phase}
         </div>
         <button onClick={() => enterFocus(item.id)} className="px-2 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-[10px] font-mono uppercase tracking-wider flex items-center gap-1">
           <Telescope className="w-3 h-3" />
@@ -2433,12 +2455,12 @@ function PathStepCard(props) {
               <button onClick={() => { moveNode(item.id, p.id, 'pathSteps'); setShowMove(false); setFocused(null); }}
                 className="w-full text-left px-2 py-1 rounded text-xs hover:bg-zinc-800 flex items-center gap-2" disabled={p.id === phase.id}>
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                <span>P{p.phase} path</span>
+                <span>Ph{p.phase} path</span>
               </button>
               <button onClick={() => { moveNode(item.id, p.id, 'items'); setShowMove(false); setFocused(null); }}
                 className="w-full text-left px-2 py-1 rounded text-xs hover:bg-zinc-800 flex items-center gap-2 text-zinc-400">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                <span>→ P{p.phase} initiative</span>
+                <span>→ Ph{p.phase} initiative</span>
               </button>
             </div>
           ))}
@@ -2741,7 +2763,7 @@ function QuickCaptureModal({ data, onClose, addNote, addReflection, addRoot, add
                   {data.roadmap.map(p => (
                     <button key={'I' + p.id} onClick={() => setDestination('phI:' + p.id)} className={`w-full text-left px-2 py-1 rounded text-xs flex items-center gap-2 ${destination === 'phI:' + p.id ? 'bg-zinc-800 text-zinc-100' : 'hover:bg-zinc-800/60 text-zinc-300'}`}>
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                      P{p.phase}: {p.title}
+                      Ph{p.phase}: {p.title}
                     </button>
                   ))}
                 </div>
@@ -2750,7 +2772,7 @@ function QuickCaptureModal({ data, onClose, addNote, addReflection, addRoot, add
                   {data.roadmap.map(p => (
                     <button key={'S' + p.id} onClick={() => setDestination('phS:' + p.id)} className={`w-full text-left px-2 py-1 rounded text-xs flex items-center gap-2 ${destination === 'phS:' + p.id ? 'bg-zinc-800 text-zinc-100' : 'hover:bg-zinc-800/60 text-zinc-300'}`}>
                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                      → P{p.phase} path
+                      → Ph{p.phase} path
                     </button>
                   ))}
                 </div>
@@ -2946,14 +2968,14 @@ function JournalModal({ data, addReflection, deleteReflection, promoteNote, onCl
                           <button key={p.id} onClick={() => { promoteNote(n, 'initiative', { phaseId: p.id }); setPromoting(null); }}
                             className="w-full text-left px-2 py-1 rounded text-[11px] hover:bg-zinc-800 flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                            P{p.phase} orbit
+                            Ph{p.phase} orbit
                           </button>
                         ))}
                         {data.roadmap.map(p => (
                           <button key={'s' + p.id} onClick={() => { promoteNote(n, 'step', { phaseId: p.id }); setPromoting(null); }}
                             className="w-full text-left px-2 py-1 rounded text-[11px] hover:bg-zinc-800 flex items-center gap-2 text-zinc-400">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: p.color }} />
-                            → P{p.phase} path step
+                            → Ph{p.phase} path step
                           </button>
                         ))}
                         <button onClick={() => setPromoting(null)} className="w-full text-center py-1 text-[9px] text-zinc-500 hover:text-zinc-300">Cancel</button>
@@ -3074,6 +3096,41 @@ function Toggle({ label, sub, value, onChange }) {
         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-zinc-50 transition-all ${value ? 'left-4' : 'left-0.5'}`} />
       </div>
     </button>
+  );
+}
+
+/* ==================== TOOLTIP ==================== */
+function Tooltip({ children, label, side = 'bottom' }) {
+  // Lightweight tooltip — appears on hover/focus, fades in after 350ms
+  const [show, setShow] = useState(false);
+  const timerRef = useRef(null);
+  const open = () => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setShow(true), 350);
+  };
+  const close = () => {
+    clearTimeout(timerRef.current);
+    setShow(false);
+  };
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+  const sideClass = side === 'top'
+    ? 'bottom-full mb-1.5'
+    : side === 'left'
+    ? 'right-full mr-1.5 top-1/2 -translate-y-1/2'
+    : side === 'right'
+    ? 'left-full ml-1.5 top-1/2 -translate-y-1/2'
+    : 'top-full mt-1.5';
+  return (
+    <span className="relative inline-flex"
+      onMouseEnter={open} onMouseLeave={close}
+      onFocus={open} onBlur={close}>
+      {children}
+      {show && (
+        <span className={`absolute z-[60] left-1/2 -translate-x-1/2 ${sideClass} px-2 py-1 rounded-md bg-zinc-900 border border-zinc-700 text-[10px] font-mono uppercase tracking-wider text-zinc-200 whitespace-nowrap pointer-events-none shadow-lg`}>
+          {label}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -3302,7 +3359,7 @@ function FocusMode({ data, itemId, startedAt, nextActions, updateNode, addChild,
               Back to map
             </button>
             <div className="text-[10px] font-mono uppercase tracking-[0.2em] truncate" style={{ color: phase?.color }}>
-              {phase ? `P${phase.phase} · ${phase.title}` : ''}
+              {phase ? `Ph${phase.phase} · ${phase.title}` : ''}
             </div>
           </div>
 
