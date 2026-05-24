@@ -424,6 +424,24 @@ export default function App() {
   const [contextMenu, setContextMenu] = useState(null);
   const [wheelMode, setWheelMode] = useState('pan'); // 'pan' | 'zoom'
   const [hoveredItemId, setHoveredItemId] = useState(null);
+  const [undoSnapshot, setUndoSnapshot] = useState(null); // { data, label, ts }
+  const undoTimerRef = useRef(null);
+
+  // Snapshot data for undo, then run a mutator. Toast appears for 6s.
+  const withUndo = (label, mutator) => {
+    const snap = JSON.parse(JSON.stringify(data));
+    mutator();
+    clearTimeout(undoTimerRef.current);
+    setUndoSnapshot({ data: snap, label, ts: Date.now() });
+    undoTimerRef.current = setTimeout(() => setUndoSnapshot(null), 6000);
+  };
+
+  const performUndo = () => {
+    if (!undoSnapshot) return;
+    setData(undoSnapshot.data);
+    setUndoSnapshot(null);
+    clearTimeout(undoTimerRef.current);
+  };
   const saveTimer = useRef(null);
   const sceneApiRef = useRef({});
 
@@ -463,7 +481,7 @@ export default function App() {
   const streak = useMemo(() => computeStreak(data.completionLog), [data.completionLog]);
   const [nextUpFilter, setNextUpFilter] = useState('all');
   const nextActions = useMemo(
-    () => findNextActions(data, { limit: 5, filter: nextUpFilter }),
+    () => findNextActions(data, { limit: nextUpFilter === 'all' ? 25 : 5, filter: nextUpFilter }),
     [data, nextUpFilter]
   );
   const nextAction = nextActions[0];
@@ -591,19 +609,23 @@ export default function App() {
   };
 
   const deleteNode = (nodeId) => {
-    setData(d => ({
-      ...d,
-      roadmap: d.roadmap.map(p => ({
-        ...p,
-        items: deleteNodeFromList(p.items, nodeId),
-        pathSteps: deleteNodeFromList(p.pathSteps, nodeId),
-      })),
-      branches: d.branches.map(b => ({
-        ...b,
-        items: deleteNodeFromList(b.items, nodeId),
-      })),
-    }));
-    setFocused(null);
+    const found = findItemAnywhere(data, nodeId);
+    const label = found?.item?.text ? `Deleted "${found.item.text.slice(0, 40)}"` : 'Item deleted';
+    withUndo(label, () => {
+      setData(d => ({
+        ...d,
+        roadmap: d.roadmap.map(p => ({
+          ...p,
+          items: deleteNodeFromList(p.items, nodeId),
+          pathSteps: deleteNodeFromList(p.pathSteps, nodeId),
+        })),
+        branches: d.branches.map(b => ({
+          ...b,
+          items: deleteNodeFromList(b.items, nodeId),
+        })),
+      }));
+      setFocused(null);
+    });
   };
 
   // Move initiative <-> path step OR between phases
@@ -658,7 +680,11 @@ export default function App() {
   const addReflection = (text) => setData(d => ({
     ...d, reflections: [{ id: uid(), text, date: new Date().toISOString() }, ...d.reflections]
   }));
-  const deleteReflection = (id) => setData(d => ({ ...d, reflections: d.reflections.filter(r => r.id !== id) }));
+  const deleteReflection = (id) => {
+    withUndo('Reflection deleted', () => {
+      setData(d => ({ ...d, reflections: d.reflections.filter(r => r.id !== id) }));
+    });
+  };
   const addNote = (text) => setData(d => ({
     ...d, notes: [{ id: uid(), text, date: new Date().toISOString() }, ...d.notes]
   }));
@@ -682,8 +708,11 @@ export default function App() {
   };
 
   const deletePhase = (phaseId) => {
-    setData(d => ({ ...d, roadmap: d.roadmap.filter(p => p.id !== phaseId) }));
-    setFocused(null);
+    const ph = data.roadmap.find(p => p.id === phaseId);
+    withUndo(`Phase ${ph?.phase} deleted`, () => {
+      setData(d => ({ ...d, roadmap: d.roadmap.filter(p => p.id !== phaseId) }));
+      setFocused(null);
+    });
   };
 
   const flyTo = (zone) => sceneApiRef.current.flyTo?.(zone);
@@ -758,9 +787,42 @@ export default function App() {
     }));
   };
 
+  // Move `dragId` to the position just before `targetId` within the same parent list.
+  const moveBeforeInList = (items, dragId, targetId) => {
+    const flatIdx = items.findIndex(i => i.id === dragId);
+    const tgtIdx = items.findIndex(i => i.id === targetId);
+    if (flatIdx !== -1 && tgtIdx !== -1 && flatIdx !== tgtIdx) {
+      const copy = [...items];
+      const [picked] = copy.splice(flatIdx, 1);
+      const insertAt = copy.findIndex(i => i.id === targetId);
+      copy.splice(insertAt, 0, picked);
+      return copy;
+    }
+    // Recurse into children — only if both ids are in the SAME children list
+    return items.map(it => ({
+      ...it,
+      children: moveBeforeInList(it.children || [], dragId, targetId),
+    }));
+  };
+
+  const reorderToPosition = (dragId, targetId) => {
+    if (dragId === targetId) return;
+    setData(d => ({
+      ...d,
+      roadmap: d.roadmap.map(p => ({
+        ...p,
+        items: moveBeforeInList(p.items, dragId, targetId),
+        pathSteps: moveBeforeInList(p.pathSteps, dragId, targetId),
+      })),
+      branches: d.branches.map(b => ({ ...b, items: moveBeforeInList(b.items, dragId, targetId) })),
+    }));
+  };
+
   // ============ KEYBOARD SHORTCUTS ============
   useEffect(() => {
     const handleKey = (e) => {
+      // Cmd/Ctrl-K opens search even from inside inputs
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setModal('search'); return; }
       const tag = e.target.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
       if (modal) return;
@@ -869,6 +931,8 @@ export default function App() {
 
       <WheelModeChip mode={wheelMode} onToggle={() => setWheelMode(m => m === 'pan' ? 'zoom' : 'pan')} />
 
+      {undoSnapshot && <UndoToast snapshot={undoSnapshot} onUndo={performUndo} onDismiss={() => setUndoSnapshot(null)} />}
+
       <TopBar
         stats={stats} savedFlash={savedFlash} metrics={data.metrics} streak={streak}
         onSettings={() => setModal('settings')}
@@ -924,6 +988,22 @@ export default function App() {
           promoteNote={promoteNote}
           onClose={() => setModal(null)} />
       )}
+      {modal === 'search' && (
+        <SearchPalette
+          data={data}
+          onClose={() => setModal(null)}
+          onSelect={(found) => {
+            setModal(null);
+            if (found.kind === 'initiative' || found.kind === 'step') {
+              setFocused({ type: found.kind === 'step' ? 'pathStep' : 'phaseItem', item: found.item, phase: found.phase });
+              flyTo(`phase${found.phase.phase}`);
+            } else if (found.kind === 'branchItem') {
+              setFocused({ type: 'branchItem', item: found.item, branch: found.branch });
+              flyTo('vision');
+            }
+          }}
+        />
+      )}
       {modal === 'briefing' && (
         <DailyBriefing
           data={data}
@@ -956,6 +1036,7 @@ export default function App() {
           deletePhase={deletePhase}
           moveNode={moveNode}
           reorderNode={reorderNode}
+          reorderToPosition={reorderToPosition}
           enterFocus={enterFocus}
           flyToNextAction={flyToNextAction}
         />
@@ -2176,6 +2257,24 @@ function ZoneNav({ flyTo, addMilestone }) {
   );
 }
 
+/* ==================== UNDO TOAST ==================== */
+function UndoToast({ snapshot, onUndo, onDismiss }) {
+  return (
+    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 slide-up">
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-zinc-900/95 backdrop-blur-xl border border-zinc-700 shadow-2xl">
+        <RotateCcw className="w-3.5 h-3.5 text-zinc-400" />
+        <span className="text-xs text-zinc-200">{snapshot.label}</span>
+        <button onClick={onUndo} className="px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-400 text-zinc-950 text-[10px] font-mono font-bold uppercase tracking-wider">
+          Undo
+        </button>
+        <button onClick={onDismiss} className="text-zinc-600 hover:text-zinc-300">
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ==================== WHEEL MODE CHIP ==================== */
 function WheelModeChip({ mode, onToggle }) {
   const isZoom = mode === 'zoom';
@@ -2414,6 +2513,7 @@ function PhaseCard(props) {
             onAddChild={(parentId, text) => props.addChild(parentId, text)}
             onFocus={(item) => setFocused({ type: 'phaseItem', item, phase })}
             onReorder={props.reorderNode}
+            onDragReorder={props.reorderToPosition}
             onEnterFocus={props.enterFocus}
             addLabel="Add initiative"
           />
@@ -2434,6 +2534,7 @@ function PhaseCard(props) {
             onAddChild={(parentId, text) => props.addChild(parentId, text)}
             onFocus={(item) => setFocused({ type: 'pathStep', item, phase })}
             onReorder={props.reorderNode}
+            onDragReorder={props.reorderToPosition}
             onEnterFocus={props.enterFocus}
             addLabel="Add path step"
           />
@@ -2711,7 +2812,7 @@ function BranchItemCard(props) {
 }
 
 /* ==================== NODE LIST + CHILD TREE (RECURSIVE) ==================== */
-function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAddChild, onFocus, onReorder, onEnterFocus, onContextMenu, addLabel }) {
+function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAddChild, onFocus, onReorder, onDragReorder, onEnterFocus, onContextMenu, addLabel }) {
   const [adding, setAdding] = useState(false);
   const [newText, setNewText] = useState('');
   const handleAdd = () => { if (newText.trim()) { onAdd(newText.trim()); setNewText(''); setAdding(false); } };
@@ -2729,6 +2830,7 @@ function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAdd
           onAddChild={onAddChild}
           onFocus={onFocus}
           onReorder={onReorder}
+          onDragReorder={onDragReorder}
           onEnterFocus={onEnterFocus}
           onContextMenu={onContextMenu}
           depth={0}
@@ -2752,10 +2854,11 @@ function NodeList({ items, color, highlightTop, onUpdate, onDelete, onAdd, onAdd
   );
 }
 
-function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, depth, onReorder, onEnterFocus, onContextMenu }) {
+function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, depth, onReorder, onDragReorder, onEnterFocus, onContextMenu }) {
   const [expanded, setExpanded] = useState(false);
   const [adding, setAdding] = useState(false);
   const [newChild, setNewChild] = useState('');
+  const [dragOver, setDragOver] = useState(false);
   const hasKids = (item.children || []).length > 0;
   const childCount = countLeaves(item.children || []);
   const due = getDueDateInfo(item.dueDate);
@@ -2767,11 +2870,32 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
   return (
     <div>
       <div
+        draggable={!!onDragReorder}
+        onDragStart={(e) => {
+          if (!onDragReorder) return;
+          e.dataTransfer.setData('text/plain', item.id);
+          e.dataTransfer.effectAllowed = 'move';
+        }}
+        onDragOver={(e) => {
+          if (!onDragReorder) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          if (!onDragReorder) return;
+          e.preventDefault();
+          const dragId = e.dataTransfer.getData('text/plain');
+          if (dragId && dragId !== item.id) onDragReorder(dragId, item.id);
+          setDragOver(false);
+        }}
         onContextMenu={onContextMenu ? (e) => onContextMenu(e, item) : undefined}
         className={`group flex items-start gap-2 p-1.5 rounded-lg border transition-colors ${
+          dragOver ? 'border-amber-400 bg-amber-500/10' :
           isTop ? 'bg-zinc-900/60 border-zinc-800' : 'bg-zinc-900/30 border-transparent hover:border-zinc-900'
         }`}
-        style={isTop ? { borderColor: color + '40' } : {}}
+        style={!dragOver && isTop ? { borderColor: color + '40' } : {}}
       >
         <button onClick={() => onUpdate(item.id, { done: !item.done })} className="flex-shrink-0 mt-0.5">
           {item.done ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Circle className="w-3.5 h-3.5 text-zinc-600 hover:text-zinc-400" />}
@@ -2843,6 +2967,7 @@ function NodeRow({ item, color, isTop, onUpdate, onDelete, onAddChild, onFocus, 
               onAddChild={onAddChild}
               onFocus={onFocus}
               onReorder={onReorder}
+              onDragReorder={onDragReorder}
               onEnterFocus={onEnterFocus}
               onContextMenu={onContextMenu}
               depth={depth + 1}
@@ -2982,6 +3107,93 @@ function ChipBtn({ active, onClick, icon: Icon, label, color }) {
       <Icon className="w-3 h-3" />
       {label}
     </button>
+  );
+}
+
+/* ==================== SEARCH PALETTE ==================== */
+function flattenAllItems(data) {
+  const list = [];
+  const walk = (item, ctx) => {
+    list.push({ ...ctx, item });
+    (item.children || []).forEach(c => walk(c, ctx));
+  };
+  (data.roadmap || []).forEach(phase => {
+    (phase.items || []).forEach(i => walk(i, { kind: 'initiative', phase }));
+    (phase.pathSteps || []).forEach(s => walk(s, { kind: 'step', phase }));
+  });
+  (data.branches || []).forEach(branch => {
+    (branch.items || []).forEach(i => walk(i, { kind: 'branchItem', branch }));
+  });
+  return list;
+}
+
+function SearchPalette({ data, onClose, onSelect }) {
+  const [query, setQuery] = useState('');
+  const [activeIdx, setActiveIdx] = useState(0);
+  const all = useMemo(() => flattenAllItems(data), [data]);
+  const q = query.trim().toLowerCase();
+  const results = useMemo(() => {
+    if (!q) {
+      // Show top 8: undone items, prioritized
+      return all.filter(r => !r.item.done).slice(0, 8);
+    }
+    return all.filter(r => {
+      const t = (r.item.text || '').toLowerCase();
+      const d = (r.item.description || '').toLowerCase();
+      return t.includes(q) || d.includes(q);
+    }).slice(0, 20);
+  }, [all, q]);
+
+  useEffect(() => { setActiveIdx(0); }, [q]);
+
+  const handleKey = (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIdx(i => Math.min(results.length - 1, i + 1)); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIdx(i => Math.max(0, i - 1)); }
+    if (e.key === 'Enter') { e.preventDefault(); if (results[activeIdx]) onSelect(results[activeIdx]); }
+    if (e.key === 'Escape') { e.preventDefault(); onClose(); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-[10vh] p-3 fade-in" onClick={onClose}>
+      <div className="bg-zinc-950 border border-zinc-700 rounded-2xl w-full max-w-xl slide-up shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-zinc-800">
+          <Search className="w-4 h-4 text-zinc-500" />
+          <input autoFocus value={query} onChange={e => setQuery(e.target.value)} onKeyDown={handleKey}
+            placeholder="Find any item, step, or note…"
+            className="flex-1 bg-transparent text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none" />
+          <kbd className="text-[9px] font-mono text-zinc-600 border border-zinc-800 rounded px-1 py-0.5">Esc</kbd>
+        </div>
+        {results.length === 0 ? (
+          <div className="p-6 text-center text-zinc-500 text-xs">No matches.</div>
+        ) : (
+          <div className="max-h-[55vh] overflow-y-auto scrollbar-thin">
+            {results.map((r, i) => {
+              const active = i === activeIdx;
+              const color = r.phase?.color || r.branch?.color || '#fbbf24';
+              const tag = r.kind === 'initiative' ? `Init · Ph${r.phase.phase}` : r.kind === 'step' ? `Step · Ph${r.phase.phase}` : r.branch?.name;
+              return (
+                <button key={r.item.id + i} onMouseEnter={() => setActiveIdx(i)} onClick={() => onSelect(r)}
+                  className={`w-full text-left px-3 py-2.5 border-b border-zinc-900 last:border-b-0 flex items-start gap-2.5 transition-colors ${active ? 'bg-zinc-800/80' : 'hover:bg-zinc-900'}`}>
+                  <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5" style={{ background: color }} />
+                  <div className="flex-1 min-w-0">
+                    <div className={`text-sm leading-tight ${r.item.done ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>{r.item.text}</div>
+                    {r.item.description && (
+                      <div className="text-[10px] text-zinc-500 leading-snug mt-0.5 line-clamp-1">{r.item.description}</div>
+                    )}
+                    <div className="text-[9px] font-mono uppercase tracking-wider mt-1" style={{ color }}>{tag}</div>
+                  </div>
+                  {active && <kbd className="text-[9px] font-mono text-zinc-500 border border-zinc-700 rounded px-1 py-0.5 flex-shrink-0">↵</kbd>}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        <div className="px-3 py-1.5 border-t border-zinc-800 bg-zinc-900/40 flex items-center justify-between text-[9px] font-mono uppercase tracking-wider text-zinc-600">
+          <span>{results.length} match{results.length === 1 ? '' : 'es'}</span>
+          <span>↑↓ nav · ↵ open · Esc close</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
